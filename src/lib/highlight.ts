@@ -1,10 +1,18 @@
-import {EditorView, Decoration, DecorationSet} from "@codemirror/view";
+import {EditorView, Decoration, type DecorationSet} from "@codemirror/view";
 import {StateEffect, StateField} from "@codemirror/state";
+
+
+interface Highlight {
+    from: number,
+    to: number,
+    mark: string
+}
 
 export const highlightField = StateField.define<DecorationSet>({
     create() {
         return Decoration.none
     },
+
     update(highlights, tr) {
         if (tr.effects.some(e => e.is(highlightEffect))) {
             let hl : any[] = []
@@ -13,6 +21,7 @@ export const highlightField = StateField.define<DecorationSet>({
             }
             return Decoration.set(hl)
         }
+
         if (!tr.changes.empty) {
             return Decoration.none
         }
@@ -27,38 +36,23 @@ export const highlightField = StateField.define<DecorationSet>({
     provide: f => EditorView.decorations.from(f)
 })
 
-export const highlightEffect = StateEffect.define<{ from: number, to: number, mark: string }>({
+export const highlightEffect = StateEffect.define<Highlight>({
     map: ({from, to, mark}, change) => ({from: change.mapPos(from), to: change.mapPos(to), mark})
 })
 
-export const clearHighlightEffect = StateEffect.define<boolean>({
-    map: (clear, _) => clear
+export const clearHighlightEffect = StateEffect.define<void>({
+    map: () => {}
 })
 
-export const dispatchHighlights = (view: EditorView, highlights: any) => {
+export const clearHighlights = (view: EditorView) => {
     if (!view) return;
-
-    if (highlights.length === 0) {
-        view.dispatch({effects: [clearHighlightEffect.of(true)]})
-        return
-    }
-    highlights = highlights.sort((a: number[][], b: number[][]) => {
-        let rowDiff = a[0][0] - b[0][0]
-        if (rowDiff === 0) {
-            return a[0][1] - b[0][1]
-        } else {
-            return rowDiff
-        }
-    })
-    let effects: StateEffect<unknown>[] = []
-
-    for (let hl of highlights) {
-        let from = hl[0]
-        let to = hl[1]
-        let mark = hl[2]
-        let fromPos = view.state.doc.line(from[0] + 1).from + from[1]
-        let toPos = view.state.doc.line(to[0] + 1).from + to[1]
-        effects.push(highlightEffect.of({from: fromPos, to: toPos, mark}))
+    view.dispatch({effects: [clearHighlightEffect.of()]})
+}
+export const dispatchHighlights = (view: EditorView, highlights: Highlight[]) => {
+    if (!view) return;
+    let effects: StateEffect<Highlight>[] = []
+    for (let highlight of highlights) {
+        effects.push(highlightEffect.of(highlight))
     }
     view.dispatch({effects})
 }
