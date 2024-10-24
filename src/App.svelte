@@ -2,7 +2,7 @@
     import Fix from "./Fix.svelte";
     import Editor from "./Editor.svelte";
     import Magnify from "./icons/Magnify.svelte";
-    import {getStore} from "./Store.svelte.js";
+    import {getStore} from "./Store.svelte";
     import Global from "./icons/Global.svelte";
     import RoadSign from "./icons/RoadSign.svelte";
     import Header from "./components/Header.svelte";
@@ -18,11 +18,11 @@
     onMount(() => {
         typeCheck()
         interval = setInterval(() => {
-            if (store.editingStroke) {
-                let time = $state.snapshot(store.editingStroke)
+            if (store.editingInput) {
+                let time = $state.snapshot(store.editingInput)
                 let text = $state.snapshot(store.text)
                 if (performance.now() - time > 500) {
-                    store.clearStroke()
+                    store.clearInput()
                     localStorage.setItem("user:text:0", text)
                     typeCheck()
                 }
@@ -80,8 +80,17 @@
             body: $state.snapshot(store.text)
         })
         let response = await request.json()
-        store.setNodeRange(response.NodeRange)
-        store.setErrors(response.TypeErrors)
+        if (response.Stage === "parse" || response.Stage === "type-check" || response.Stage === "import") {
+            store.nodeRange = response.NodeRange
+            store.parsingErrors = response.ParsingErrors
+            store.typeErrors = response.TypeErrors
+            store.importErrors = response.ImportErrors
+        } else {
+            console.log("Program is well-typed")
+            store.nodeRange = []
+            store.parsingErrors = []
+            store.typeErrors = []
+        }
 
         if (response.TypeErrors.length > 0) {
             store.setDefaultErrorFix()
@@ -104,7 +113,9 @@
                     PROLOG
                 </button>
             </nav>
-
+            <section class="p-2 border-stone-300 border-b">
+                {store.message}
+            </section>
             <section class="p-2 flex-1 flex flex-col gap-2">
                 <Header text="Local Types">
                     <Magnify></Magnify>
@@ -125,10 +136,10 @@
                                     </span>
                                 </td>
                                 <td class="p-1.5 w-0 font-bold text-stone-300 mx-1"> ::</td>
-                                <td class="p-1.5 text-left">{type}</td>
+                                <td class="p-1.5 text-left">{type.replaceAll("[Char]", "String")}</td>
                                 <td class="p-1.5 w-0">
-                                    <div class="flex badge badge-warning">
-                                        <Construction></Construction>
+                                    <div class="flex badge">
+                                        <Construction class="text-stone-500"></Construction>
                                     </div>
                                 </td>
                             </tr>
@@ -157,11 +168,11 @@
                                     <div>{decode(name)[1]}</div>
                                 </td>
                                 <td class="p-1.5 w-0 font-bold text-stone-300 mx-1"> ::</td>
-                                <td class="p-1.5">{type}</td>
+                                <td class="p-1.5">{type.replaceAll("[Char]", "String")}</td>
                                 <td class="p-1.5 w-0">
                                     {#if keysWithChangedValues().includes(name)}
-                                        <div class="flex badge badge-warning">
-                                            <Construction></Construction>
+                                        <div class="flex badge">
+                                            <Construction class="text-stone-500"></Construction>
                                         </div>
                                     {/if}
                                 </td>
@@ -176,9 +187,9 @@
             <span class="border-b border-stone-300 px-2 py-1 flex items-center gap-2">
                 <Haskell class="text-primary"></Haskell>
                 <span class="text-sm">Main.hs</span>
-                {#if store.errors && store.errors.length}
+                {#if store.typeErrors && store.typeErrors.length}
                 <span class="badge badge-sm text-white badge-error">
-                    {store.errors.length}
+                    {store.typeErrors.length}
                 </span>
                 {:else}
                 <span class="badge badge-sm text-white badge-success text-lg">
@@ -204,13 +215,13 @@
                             (store.selectedFix === fixId ? "border-primary" : "border-stone-200")
                         } onclick={() => store.chooseFix(fixId)}>
 
-                    <div class="flex border-b border-stone-200  w-full gap-2 items-center text-sm px-2 py-1">
+                    <span class="flex border-b border-stone-200  w-full gap-2 items-center text-sm px-2 py-1">
                         <span class="">{fixId + 1} / {store.getCurrentError().Fixes.length}</span>
 
                         {#if store.selectedFix === fixId}
                             <span class="badge badge-sm badge-primary">Selected</span>
                         {/if}
-                    </div>
+                    </span>
 
                     <Fix lines={fix.Snapshot} selected={store.selectedFix === fixId}></Fix>
                 </button>
@@ -230,9 +241,17 @@
     </footer>
 
     <div class="flex border-t border-stone-200 text-sm uppercase">
-        {#if store.errors && store.errors.length !== 0}
+        {#if store.typeErrors.length !== 0}
             <div class="bg-error text-white px-2 h-8 leading-8">
-                Type Error ({store.errors.length})
+                Type Error ({store.typeErrors.length})
+            </div>
+        {:else if store.importErrors.length > 0 }
+            <div class="bg-error text-white px-2 h-8 leading-8">
+                Import Error ({store.importErrors.length})
+            </div>
+        {:else if store.parsingErrors.length > 0 }
+            <div class="bg-error text-white px-2 h-8 leading-8">
+                Import Error ({store.parsingErrors.length})
             </div>
         {:else}
             <div class="bg-success text-white px-2 h-8 leading-8">
@@ -240,9 +259,9 @@
             </div>
         {/if}
 
-        {#if store.errors && store.errors.length >= 1}
+        {#if store.typeErrors && store.typeErrors.length >= 1}
             <section class="flex gap-2 items-center px-2">
-                {#each store.errors as error, index}
+                {#each store.typeErrors as error, index}
                     {#if index === store.selectedError }
                         <div class="btn btn-xs btn-primary">
                             Error {index + 1}

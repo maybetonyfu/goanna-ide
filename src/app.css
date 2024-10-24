@@ -13,12 +13,16 @@ html, body, #app{
 }
 
 .mark-0 {
-  background-color: #d3fad0;
+  background-color: #b5fab0;
 }
-.mark-1 { background-color: #efdcfa }
+
+.mark-1 { background-color: #e9c9fb
+}
 .mark-2 { background-color: #c8f5ff }
-.mark-3 { background-color: #fafde4 }
-.mark-4 { background-color: #fdeeda }
+.mark-3 { background-color: #9df6d1
+}
+.mark-4 { background-color: #efc48c
+}
 .mark-5 { background-color: #FF9E9E }
 .mark-6 { background-color: #38C6BD }
 .mark-7 { background-color: #97FFCF }
@@ -43,6 +47,7 @@ html, body, #app{
 
 .cm-content:has(.mark-spotlight) {
   color: #b1b1b1;
+  font-weight: 500;
   opacity: 0.75;
 }
 

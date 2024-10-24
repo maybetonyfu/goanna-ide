@@ -6,10 +6,9 @@
     import {highlightField, dispatchHighlights, clearHighlights} from "./lib/highlight";
     import {spotlightField, clearSpotlights, dispatchSpotlights} from "./lib/spotlight";
 
-    import {getStore} from "./Store.svelte.js";
+    import {getStore} from "./Store.svelte";
 
     let store = getStore()
-
     let editorElement = $state(null)
     let editorView = $state(null)
 
@@ -48,9 +47,8 @@
                     spotlightField,
                     EditorView.updateListener.of((viewUpdate) => {
                         if (viewUpdate.docChanged) {
-                            let newDoc = viewUpdate.state.doc.toString()
-                            store.setText(newDoc)
-                            store.newStroke()
+                            store.text =  viewUpdate.state.doc.toString()
+                            store.newInput()
                         }
 
                         if (viewUpdate.focusChanged && viewUpdate.view.hasFocus) {
