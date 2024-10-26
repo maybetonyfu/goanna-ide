@@ -83,7 +83,8 @@ let selectedFixByError = $state<ErrorFixTable>({})
 let selectedFix = $derived(selectedFixByError[selectedError])
 let spotlightNode = $state<number>(null)
 let editingInput = $state<number | null>(null) // for automatically running type-check in the background
-
+let inferredTypes = $state < GlobalType>({})
+let declarations = $state<string[]>([])
 
 function assignColors(errors) {
     errors.forEach((error, i) => {
@@ -113,6 +114,9 @@ export function getStore() {
         },
         set importErrors(iErrors: Identifier[]) {
             importErrors = iErrors
+        },
+        set declarations(ds : string[]) {
+            declarations = ds
         },
         get spotlightRange(): Range {
             if (spotlightNode === null) {
@@ -237,6 +241,22 @@ export function getStore() {
         },
         get editingInput(): number {
             return editingInput
+        },
+
+        set inferredTypes(newGlobalType: GlobalType) {
+            inferredTypes = newGlobalType
+        },
+
+        get globalTypes() : [string, string][] {
+            let globalType;
+            if (selectedError !== null && selectedFix !== null && selectedFix !== undefined) {
+                globalType =  typeErrors[selectedError].Fixes[selectedFix].GlobalType
+            } else {
+                globalType = inferredTypes
+            }
+            return declarations
+                .map(d => ([d, globalType[d]] as [string, string]))
+                .filter(([name, type]) =>  !name.startsWith('p_'))
         },
         get message(): string {
             if (parsingErrors.length > 0) {

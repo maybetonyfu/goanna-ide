@@ -1,8 +1,6 @@
-<script>
+<script lang="ts">
     import Fold from "./icons/Fold.svelte";
-
-    /** @type {{ lines: any[], selected: boolean }} */
-    let {lines, selected} = $props()
+    let {lines} = $props<{lines:any[]}>()
 
 </script>
 
