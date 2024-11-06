@@ -12,13 +12,17 @@
     import Haskell from "./icons/Haskell.svelte";
     import CheckMark from "./icons/CheckMark.svelte";
     import Split from "split-grid"
+    import Swiper from 'swiper';
+    import { Navigation, Pagination } from 'swiper/modules';
+
     import Gutter from "./components/Gutter.svelte";
 
     let store = getStore()
     let interval = $state(null)
     let gutterVertical = $state(null)
     let gutterHorizontal = $state(null)
-    let backendUrl = import.meta.env.DEV ? "http://localhost:8090" : "https://goanna-api.fly.dev"
+    let swiper = $state(null)
+    let backendUrl = import.meta.env.DEV ? "http://localhost:8090" : "https://gonana-api.fly.dev"
     onMount(() => {
         typeCheck()
         interval = setInterval(() => {
@@ -32,6 +36,27 @@
                 }
             }
         }, 500)
+
+        swiper = new Swiper('.swiper', {
+            modules: [Navigation, Pagination],
+            autoHeight: true,
+            slidesPerView: 'auto',
+            grabCursor: true,
+            spaceBetween: 30,
+            slideToClickedSlide: true,
+            // freeMode: {
+            //     enabled: true,
+            //     sticky: true,
+            // },
+            pagination: {
+                el: ".swiper-pagination",
+                type: "bullets",
+                clickable: true,
+            },
+        })
+        swiper.on('activeIndexChange', function (sw) {
+            console.log(sw.activeIndex);
+        });
     })
 
     $effect(() => {
@@ -48,6 +73,12 @@
                 element: gutterHorizontal,
             }],
         })
+    })
+
+    $effect(() => {
+        if (store.getCurrentError() !== null && swiper !== null) {
+            swiper.update()
+        }
     })
 
     onDestroy(() => {
@@ -119,9 +150,9 @@
 
 </script>
 
-<main class="h-full" style="display:grid;grid-template-rows: 1fr min-content;">
+<main class="h-full flex flex-col">
 
-    <section style="display:grid;grid-template-columns: 1fr 10px 2fr;">
+    <section class="flex-1" style="display:grid;grid-template-columns: 1fr 10px 2fr;">
         <aside class="flex flex-col">
             <nav class="p-2 flex items-center gap-2 border-stone-300 border-b">
                 <button class="btn btn-sm btn-primary " onclick={typeCheck}>TYPE CHECK
@@ -233,44 +264,41 @@
             </div>
         </article>
     </section>
-    <footer class="flex flex-col justify-between border-t border-stone-200">
+    <footer class="w-full flex flex-col justify-between border-t border-stone-200">
+        <!--{#if store.typeErrors.length > 0 && store.selectedError !== null}-->
         <section class="flex-1 p-2 flex flex-col gap-2 justify-between">
             <Header text="Possible Fixes">
                 <RoadSign></RoadSign>
             </Header>
-            {#if store.selectedError !== null}
-                <div class="carousel carousel-center space-x-2">
-                    {#each store.getCurrentError().Fixes as fix, fixId}
-                        <button id={"fix" + fixId} class={"carousel-item min-w-72 bg-base-100 flex flex-col border rounded-md overflow-hidden " +
-                            (store.selectedFix === fixId ? "border-primary" : "border-stone-200")
-                        } onclick={() => store.chooseFix(fixId)}>
+                <div class="swiper">
+                    <div class="swiper-wrapper">
+                        {#if store.getCurrentError() !== null}
+                        {#each store.getCurrentError().Fixes as fix, fixId}
+                            <button id={"fix" + fixId} class="swiper-slide min-w-72 bg-base-100 flex flex-col border rounded-md border-stone-200"
+                                    style="width: fit-content"
+                                    onclick={() => store.chooseFix(fixId)}
+                            >
 
-                    <span class="flex border-b border-stone-200  w-full gap-2 items-center text-sm px-2 py-1">
-                        <span class="">{fixId + 1} / {store.getCurrentError().Fixes.length}</span>
+                            <span class="flex border-b border-stone-200  gap-2 items-center text-sm px-2 py-1">
+                                <span class="">{fixId + 1} / {store.getCurrentError().Fixes.length}</span>
 
-                        {#if store.selectedFix === fixId}
-                            <span class="badge badge-sm badge-primary">Selected</span>
+                                {#if store.selectedFix === fixId}
+                                    <span class="badge badge-sm badge-primary">Selected</span>
+                                {/if}
+                            </span>
+
+                                <Fix lines={fix.Snapshot}></Fix>
+                            </button>
+                        {/each}
                         {/if}
-                    </span>
-
-                            <Fix lines={fix.Snapshot}></Fix>
-                        </button>
-                    {/each}
+                    </div>
                 </div>
-                <div class="flex w-full justify-center gap-2 py-2">
-                    {#each store.getCurrentError().Fixes as fix, fixId}
-                        {#if store.selectedFix === fixId}
-                            <a href={"#fix"  + fixId} class="btn btn-xs btn-primary" >{fixId + 1}</a>
-                        {:else}
-                            <a href={"#fix"  + fixId} class="btn btn-xs" onclick={()=>store.chooseFix(fixId)}>{fixId + 1}</a>
-                        {/if}
-                    {/each}
-                </div>
-            {/if}
+                <div class="swiper-pagination"></div>
         </section>
+        <!--{/if}-->
 
 
-        <section class="h-8 leading-8 flex border-t border-stone-200 text-sm uppercase">
+        <section class="h-7 leading-7 flex border-t border-stone-200 text-sm uppercase">
             {#if store.typeErrors.length !== 0}
                 <div class="bg-error text-white px-2">
                     Type Error ({store.typeErrors.length})
@@ -310,3 +338,10 @@
 
 
 </main>
+
+<style>
+    :global(.swiper){
+        width: 100%;
+        height: 100%;
+    }
+</style>

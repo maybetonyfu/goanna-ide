@@ -169,6 +169,12 @@ export function getStore() {
             }
         },
         getCurrentError(): TypeError {
+            if (selectedError === null) {
+                return null
+            }
+            if (typeErrors.length === 0) {
+                return null
+            }
             return typeErrors[selectedError]
         },
         get selectedFix(): number {
