@@ -12,19 +12,33 @@
     import Haskell from "./icons/Haskell.svelte";
     import CheckMark from "./icons/CheckMark.svelte";
     import Split from "split-grid"
-    import Swiper from 'swiper';
-    import { Navigation, Pagination } from 'swiper/modules';
-
     import Gutter from "./components/Gutter.svelte";
+    import Splide from '@splidejs/splide';
 
     let store = getStore()
     let interval = $state(null)
+
     let gutterVertical = $state(null)
     let gutterHorizontal = $state(null)
-    let swiper = $state(null)
-    let backendUrl = import.meta.env.DEV ? "http://localhost:8090" : "https://gonana-api.fly.dev"
+    let slider = $state(null)
+    let backendUrl = import.meta.env.DEV ? "http://localhost:8090" : "https://goanna-api.fly.dev"
+
     onMount(() => {
+        slider = new Splide( '.splide', {
+            gap: '1rem',
+            autoWidth: true,
+            autoHeight: true,
+            arrows: false,
+            pagination: true,
+            padding: {top: '1rem', bottom: '2rem'},
+            focus: 0,
+        }).mount();
+        slider.on('move', (index) => {
+            store.chooseFix(index)
+        })
+        //
         typeCheck()
+
         interval = setInterval(() => {
             if (store.editingInput) {
                 let time = $state.snapshot(store.editingInput)
@@ -37,29 +51,6 @@
             }
         }, 500)
 
-        swiper = new Swiper('.swiper', {
-            modules: [Navigation, Pagination],
-            autoHeight: true,
-            slidesPerView: 'auto',
-            grabCursor: true,
-            spaceBetween: 30,
-            slideToClickedSlide: true,
-            // freeMode: {
-            //     enabled: true,
-            //     sticky: true,
-            // },
-            pagination: {
-                el: ".swiper-pagination",
-                type: "bullets",
-                clickable: true,
-            },
-        })
-        swiper.on('activeIndexChange', function (sw) {
-            console.log(sw.activeIndex);
-        });
-    })
-
-    $effect(() => {
         Split({
             columnGutters: [{
                 track: 1,
@@ -73,12 +64,8 @@
                 element: gutterHorizontal,
             }],
         })
-    })
 
-    $effect(() => {
-        if (store.getCurrentError() !== null && swiper !== null) {
-            swiper.update()
-        }
+
     })
 
     onDestroy(() => {
@@ -87,6 +74,7 @@
         if (interval) {
             clearInterval(interval)
         }
+        slider.destroy()
     })
 
     function keysWithChangedValues () {
@@ -147,6 +135,12 @@
             store.resetErrorFix()
         }
     }
+
+    $effect(() => {
+        if (store.getAvailableFixes()) {
+            slider.refresh()
+        }
+    })
 
 </script>
 
@@ -210,10 +204,7 @@
                         <Header text="Global Types">
                             <Global></Global>
                         </Header>
-<!--                        <div class="flex items-center gap-2 text-sm">-->
-<!--                            Show Prelude-->
-<!--                            <input type="checkbox" class="toggle toggle-sm" checked={false} />-->
-<!--                        </div>-->
+
                     </div>
                     <div class="relative overflow-scroll h-full">
                         <div class="absolute w-full px-2 pb-2">
@@ -265,37 +256,40 @@
         </article>
     </section>
     <footer class="w-full flex flex-col justify-between border-t border-stone-200">
-        <!--{#if store.typeErrors.length > 0 && store.selectedError !== null}-->
-        <section class="flex-1 p-2 flex flex-col gap-2 justify-between">
+        <section class="flex-1 p-2">
             <Header text="Possible Fixes">
                 <RoadSign></RoadSign>
             </Header>
-                <div class="swiper">
-                    <div class="swiper-wrapper">
-                        {#if store.getCurrentError() !== null}
-                        {#each store.getCurrentError().Fixes as fix, fixId}
-                            <button id={"fix" + fixId} class="swiper-slide min-w-72 bg-base-100 flex flex-col border rounded-md border-stone-200"
-                                    style="width: fit-content"
-                                    onclick={() => store.chooseFix(fixId)}
-                            >
 
-                            <span class="flex border-b border-stone-200  gap-2 items-center text-sm px-2 py-1">
-                                <span class="">{fixId + 1} / {store.getCurrentError().Fixes.length}</span>
+            <section class="splide" role="group" aria-label="Fixes">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                            {#each store.getAvailableFixes() as fix, fixId}
+                                <li class="splide__slide">
+                                    <button id={"fix" + fixId} class="min-w-72 bg-base-100 flex flex-col border rounded-md"
+                                            class:border-stone-200={fixId !== store.selectedFix}
+                                            class:border-primary={fixId === store.selectedFix}
+                                            style="width: fit-content"
+                                            onclick={() => {
+                                                slider.go(fixId)
+                                            }}
+                                    >
+                                        <span class="flex border-b border-stone-200 gap-2 items-center text-sm px-2 py-1">
+                                            <span class="">{fixId + 1} / {store.getCurrentError().Fixes.length}</span>
+                                            {#if store.selectedFix === fixId}
+                                                <span class="badge badge-sm badge-primary">Selected</span>
+                                            {/if}
+                                        </span>
 
-                                {#if store.selectedFix === fixId}
-                                    <span class="badge badge-sm badge-primary">Selected</span>
-                                {/if}
-                            </span>
-
-                                <Fix lines={fix.Snapshot}></Fix>
-                            </button>
-                        {/each}
-                        {/if}
+                                        <Fix lines={fix.Snapshot}></Fix>
+                                    </button>
+                                </li>
+                            {/each}
+                        </ul>
                     </div>
-                </div>
-                <div class="swiper-pagination"></div>
+            </section>
+
         </section>
-        <!--{/if}-->
 
 
         <section class="h-7 leading-7 flex border-t border-stone-200 text-sm uppercase">
@@ -338,10 +332,3 @@
 
 
 </main>
-
-<style>
-    :global(.swiper){
-        width: 100%;
-        height: 100%;
-    }
-</style>

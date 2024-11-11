@@ -168,7 +168,7 @@ export function getStore() {
                 selectedFixByError[newSelectedError] = 0
             }
         },
-        getCurrentError(): TypeError {
+        getCurrentError(): TypeError  | null{
             if (selectedError === null) {
                 return null
             }
@@ -177,8 +177,17 @@ export function getStore() {
             }
             return typeErrors[selectedError]
         },
-        get selectedFix(): number {
+        get selectedFix(): number | null {
             return selectedFix
+        },
+        getAvailableFixes(): Fix[] {
+            if (selectedError === null) {
+                return []
+            }
+            if (typeErrors.length === 0) {
+                return []
+            }
+            return typeErrors[selectedError].Fixes
         },
         getCurrentFix(): Fix {
             return typeErrors[selectedError].Fixes[selectedFix]

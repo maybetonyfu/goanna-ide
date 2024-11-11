@@ -20,9 +20,9 @@
     "@codemirror/commands": "^6.6.2",
     "@codemirror/state": "^6.4.1",
     "@codemirror/view": "^6.34.1",
+    "@splidejs/splide": "^4.1.4",
     "codemirror": "^6.0.1",
     "daisyui": "^4.12.12",
-    "split-grid": "^1.0.11",
-    "swiper": "^11.1.14"
+    "split-grid": "^1.0.11"
   }
 }
