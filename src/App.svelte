@@ -21,7 +21,7 @@
     let gutterVertical = $state(null)
     let gutterHorizontal = $state(null)
     let slider = $state(null)
-    let backendUrl = import.meta.env.DEV ? "http://localhost:8090" : "https://goanna-api.fly.dev"
+    let backendUrl = import.meta.env.DEV ? "http://localhost:8080" : "https://goanna-api.fly.dev"
 
     onMount(() => {
         slider = new Splide( '.splide', {
@@ -274,7 +274,7 @@
                                                 slider.go(fixId)
                                             }}
                                     >
-                                        <span class="flex border-b border-stone-200 gap-2 items-center text-sm px-2 py-1">
+                                        <span class="w-full flex border-b border-stone-200 gap-2 items-center text-sm px-2 py-1">
                                             <span class="">{fixId + 1} / {store.getCurrentError().Fixes.length}</span>
                                             {#if store.selectedFix === fixId}
                                                 <span class="badge badge-sm badge-primary">Selected</span>
