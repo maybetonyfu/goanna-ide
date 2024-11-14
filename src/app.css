@@ -55,16 +55,3 @@ html, body, #app{
   /*background: none;*/
   /*border: none;*/
 }
-
-.splide__track {
-  padding-top: 0.75rem;
-  padding-bottom: 2rem;
-}
-
-.splide__pagination__page.is-active {
-    background: oklch(var(--p));
-}
-
-.splide:not(.is-overflow) .splide__pagination {
-    display: flex;
-}

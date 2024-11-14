@@ -14,6 +14,8 @@
     import Split from "split-grid"
     import Gutter from "./components/Gutter.svelte";
     import Splide from '@splidejs/splide';
+    import Left from "./icons/Left.svelte";
+    import Right from "./icons/Right.svelte";
 
     let store = getStore()
     let interval = $state(null)
@@ -29,14 +31,15 @@
             autoWidth: true,
             autoHeight: true,
             arrows: false,
-            pagination: true,
+            pagination: false,
             padding: {top: '1rem', bottom: '2rem'},
             focus: 0,
         }).mount();
+
         slider.on('move', (index) => {
             store.chooseFix(index)
         })
-        //
+
         typeCheck()
 
         interval = setInterval(() => {
@@ -64,7 +67,6 @@
                 element: gutterHorizontal,
             }],
         })
-
 
     })
 
@@ -184,7 +186,7 @@
                                     </span>
                                             </td>
                                             <td class="p-1.5 w-0 font-bold text-stone-300 mx-1"> ::</td>
-                                            <td class="p-1.5 text-left">{type.replaceAll("[Char]", "String")}</td>
+                                            <td class="p-1.5 text-left">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
                                             <td class="p-1.5 w-0">
                                                 <div class="flex badge">
                                                     <Construction class="text-stone-500"></Construction>
@@ -216,7 +218,7 @@
                                             <div>{decode(name)[1]}</div>
                                         </td>
                                         <td class="p-1.5 w-0 font-bold text-stone-300 mx-1"> ::</td>
-                                        <td class="p-1.5">{type.replaceAll("[Char]", "String")}</td>
+                                        <td class="p-1.5">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
                                         <td class="p-1.5 w-0">
                                             {#if keysWithChangedValues().includes(name)}
                                                 <div class="flex badge">
@@ -239,15 +241,30 @@
         <article class="border-stone-300 border-l flex flex-col">
             <span class="border-b border-stone-300 px-2 py-1 flex items-center gap-2">
                 <Haskell class="text-primary"></Haskell>
-                <span class="text-sm">Main.hs</span>
-                {#if store.typeErrors && store.typeErrors.length}
-                <span class="badge badge-sm text-white badge-error">
-                    {store.typeErrors.length}
-                </span>
-                {:else}
-                <span class="badge badge-sm text-white badge-success text-lg">
-                    <CheckMark></CheckMark>
-                </span>
+                <span class="mr-1">Main.hs</span>
+                {#each store.typeErrors as error, errorIndex}
+                    <button class="badge text-white badge-error text-sm"
+                            class:badge-outline={errorIndex !== store.selectedError}
+                            onclick={() => {
+                        store.chooseError(errorIndex);
+                    }}>
+                        Type Error {errorIndex + 1}
+                    </button>
+                {/each}
+                {#if store.parsingErrors.length !== 0}
+                    <span class="badge text-white badge-error text-sm">
+                        Parsing Error
+                    </span>
+                {/if}
+                {#if store.importErrors.length !== 0}
+                    <span class="badge text-white badge-error text-sm">
+                        Import Error
+                    </span>
+                {/if}
+                {#if store.typeErrors.length === 0 && store.parsingErrors.length === 0 && store.importErrors.length === 0}
+                    <span class="badge badge-sm text-white badge-success text-lg">
+                        <CheckMark></CheckMark>
+                    </span>
                 {/if}
             </span>
             <div class="relative flex-1">
@@ -255,8 +272,7 @@
             </div>
         </article>
     </section>
-    <footer class="w-full flex flex-col justify-between border-t border-stone-200">
-        <section class="flex-1 p-2">
+    <footer class="w-full flex flex-col justify-between border-t border-stone-200 gap-2 p-2">
             <Header text="Possible Fixes">
                 <RoadSign></RoadSign>
             </Header>
@@ -288,46 +304,39 @@
                         </ul>
                     </div>
             </section>
+            <section class="w-full flex gap-2 justify-center">
+                <button class="btn btn-sm" onclick={() => {
+                    if (store.selectedFix > 0) {
+                        slider.go(store.selectedFix - 1)
+                    }
+                }}>
+                    <Left></Left>
+                </button>
 
-        </section>
+                {#each store.getAvailableFixes() as fix, fixId}
+                    <button
+                            class="btn btn-sm"
+                            class:btn-primary={fixId === store.selectedFix}
+                            onclick={() => {
+                                slider.go(fixId)
+                            }}
+                    >
+                        {fixId + 1}
+                    </button>
+                {/each}
+
+                <button class="btn btn-sm" onclick={() => {
+                    if (store.selectedFix < store.getAvailableFixes().length - 1) {
+                        slider.go(store.selectedFix + 1)
+                    }
+                }}>
+                    <Right></Right>
+                </button>
+
+            </section>
 
 
-        <section class="h-7 leading-7 flex border-t border-stone-200 text-sm uppercase">
-            {#if store.typeErrors.length !== 0}
-                <div class="bg-error text-white px-2">
-                    Type Error ({store.typeErrors.length})
-                </div>
-            {:else if store.importErrors.length > 0 }
-                <div class="bg-error text-white px-2">
-                    Import Error ({store.importErrors.length})
-                </div>
-            {:else if store.parsingErrors.length > 0 }
-                <div class="bg-error text-white px-2">
-                    Import Error ({store.parsingErrors.length})
-                </div>
-            {:else}
-                <div class="bg-success text-white px-2">
-                    OK
-                </div>
-            {/if}
 
-            {#if store.typeErrors && store.typeErrors.length >= 1}
-                <section class="flex gap-2 items-center px-2">
-                    {#each store.typeErrors as error, index}
-                        {#if index === store.selectedError }
-                            <div class="btn btn-xs btn-primary">
-                                Error {index + 1}
-                            </div>
-                        {:else}
-                            <button onclick={() => store.chooseError(index)}
-                                    class="btn btn-xs">
-                                Error {index + 1}
-                            </button>
-                        {/if}
-                    {/each}
-                </section>
-            {/if}
-        </section>
     </footer>
 
 
