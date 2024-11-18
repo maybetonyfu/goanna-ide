@@ -31,6 +31,13 @@ z = if True then 1 else '2'
 `.trim()
 
 
+examples["Applicative"] = `
+x = (+) <$> [1,2,3,4] <*> ['1', '2', '3']
+
+y :: Functor f => f Bool
+y = pure True
+`.trim()
+
 examples["Monad"] = `
 x :: [Char]
 x = do
@@ -38,8 +45,8 @@ x = do
    return n
 `.trim()
 
-
 examples["List comprehension"] = `
 x = [x + y | x <- [1..3], y <- ['1'..'4']]
 `.trim()
+
 export default examples

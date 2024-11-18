@@ -167,6 +167,7 @@
                         <option value={key}>{key}</option>
                     {/each}
                 </select>
+<!--                <button class="btn btn-sm btn-primary"> Type Check</button>-->
             </nav>
             <section class="p-2 border-stone-300 border-b">
                 {@html store.message}
@@ -199,7 +200,7 @@
                                             <td class="p-1.5 w-0 font-bold text-stone-300 mx-1"> ::</td>
                                             <td class="p-1.5 text-left">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
                                             <td class="p-1.5 w-0">
-                                                <div class="flex badge">
+                                                <div class="flex badge hint--bottom-left hint--medium" aria-label="The type of this fragment changes based on which possible fix is chosen.">
                                                     <Construction class="text-stone-500"></Construction>
                                                 </div>
                                             </td>
@@ -232,7 +233,7 @@
                                         <td class="p-1.5">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
                                         <td class="p-1.5 w-0">
                                             {#if keysWithChangedValues().includes(name)}
-                                                <div class="flex badge">
+                                                <div class="flex badge hint--bottom-left hint--medium" aria-label="The type of this variable changes based on which possible fix is chosen.">
                                                     <Construction class="text-stone-500"></Construction>
                                                 </div>
                                             {/if}
