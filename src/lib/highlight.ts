@@ -51,7 +51,8 @@ export const clearHighlights = (view: EditorView) => {
 export const dispatchHighlights = (view: EditorView, highlights: Highlight[]) => {
     if (!view) return;
     let effects: StateEffect<Highlight>[] = []
-    for (let highlight of highlights) {
+    let _highlights = highlights.sort((a, b) => a.from - b.from)
+    for (let highlight of _highlights) {
         effects.push(highlightEffect.of(highlight))
     }
     view.dispatch({effects})

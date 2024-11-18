@@ -85,6 +85,8 @@ let spotlightNode = $state<number>(null)
 let editingInput = $state<number | null>(null) // for automatically running type-check in the background
 let inferredTypes = $state < GlobalType>({})
 let declarations = $state<string[]>([])
+let topLevels = $state<string[]>([])
+let selectedExample = $state<string | null>(null)
 
 function assignColors(errors) {
     errors.forEach((error, i) => {
@@ -117,6 +119,12 @@ export function getStore() {
         },
         set declarations(ds : string[]) {
             declarations = ds
+        },
+        set topLevels(ts: string[]) {
+            topLevels = ts
+        },
+        get topLevels(): string[] {
+            return topLevels
         },
         get spotlightRange(): Range {
             if (spotlightNode === null) {
@@ -275,15 +283,28 @@ export function getStore() {
         },
         get message(): string {
             if (parsingErrors.length > 0) {
-                return "The program doesn't look like valid Haskell."
+                return "Main.hs contains invalid Haskell syntax."
             }
-            if (importErrors.length > 0) {
-                return "Variable is not defined."
+            if (importErrors.length == 1) {
+                return `Variable <span class="kbd kbd-sm">${importErrors[0].name}</span> is not defined.`
             }
-            if (typeErrors.length > 0) {
-                return "The program contains type error"
+            if (importErrors.length > 1) {
+                let variables = importErrors.map(ident => "<span class='kbd kbd-sm'>" + ident.name + "</span>").join(", ")
+                return `Variables ${variables} are not defined.`
             }
-            return "The code looks good"
-        }
+            if (typeErrors.length == 1) {
+                return `Main.hs contains 1 type error.`
+            }
+            if (typeErrors.length > 1) {
+                return `Main.hs contains ${typeErrors.length} type errors.`
+            }
+            return "Main.hs is well-typed."
+        },
+        get selectedExample(): string | null {
+            return selectedExample
+        },
+        set selectedExample(newSelectedExample: string | null) {
+            selectedExample = newSelectedExample
+        },
     }
 }

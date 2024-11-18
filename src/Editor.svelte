@@ -7,7 +7,7 @@
     import {spotlightField, clearSpotlights, dispatchSpotlights} from "./lib/spotlight";
 
     import {getStore} from "./Store.svelte";
-
+    import examples from "./lib/examples";
     let store = getStore()
     let editorElement = $state(null)
     let editorView = $state(null)
@@ -15,6 +15,18 @@
     function getPosition(line, col) {
         return editorView.state.doc.line(line + 1).from + col
     }
+
+    $effect(() => {
+        if (editorView !== null && store.selectedExample !== null) {
+            clearSpotlights(editorView)
+            clearHighlights(editorView)
+            editorView.dispatch({
+                changes: {
+                    from: 0, to: editorView.state.doc.length, insert: examples[store.selectedExample]
+                }
+            })
+        }
+    })
 
     $effect(() => {
         if (editorView === null) return
@@ -35,6 +47,10 @@
             })
         }
     })
+
+
+
+
 
     onMount(() => {
         editorView = new EditorView({

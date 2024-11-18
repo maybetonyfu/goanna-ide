@@ -16,10 +16,9 @@
     import Splide from '@splidejs/splide';
     import Left from "./icons/Left.svelte";
     import Right from "./icons/Right.svelte";
-
+    import examples from "./lib/examples";
     let store = getStore()
     let interval = $state(null)
-
     let gutterVertical = $state(null)
     let gutterHorizontal = $state(null)
     let slider = $state(null)
@@ -104,24 +103,32 @@
     }
 
     async function genProlog() {
+        let text = $state.snapshot(store.text)
+        if (text.length === 0) {
+            text = "\n"
+        }
         let request = await fetch(backendUrl +"/prolog", {
             method: "POST",
             headers: {
                 "Content-Type": "text/plain"
             },
-            body: $state.snapshot(store.text)
+            body: text
         })
         let prolog = await request.text()
         console.log(prolog)
     }
 
     async function typeCheck() {
+        let text = $state.snapshot(store.text)
+        if (text.length === 0) {
+            text = "\n"
+        }
         let request = await fetch(backendUrl+"/typecheck", {
             method: "POST",
             headers: {
                 "Content-Type": "text/plain"
             },
-            body: $state.snapshot(store.text)
+            body: text
         })
         let response = await request.json()
         store.nodeRange = response.NodeRange
@@ -130,6 +137,7 @@
         store.importErrors = response.ImportErrors
         store.inferredTypes = response.InferredTypes
         store.declarations = response.Declarations
+        store.topLevels = response.TopLevels
 
         if (response.TypeErrors.length > 0) {
             store.setDefaultErrorFix()
@@ -144,21 +152,24 @@
         }
     })
 
+
 </script>
 
 <main class="h-full flex flex-col">
-
     <section class="flex-1" style="display:grid;grid-template-columns: 1fr 10px 2fr;">
         <aside class="flex flex-col">
             <nav class="p-2 flex items-center gap-2 border-stone-300 border-b">
-                <button class="btn btn-sm btn-primary " onclick={typeCheck}>TYPE CHECK
-                </button>
-                <button class="btn btn-sm" onclick={genProlog}>GENERATE
-                    PROLOG
-                </button>
+                <select class="select select-sm" onchange={(e) => {
+                       store.selectedExample = e.currentTarget.value
+                }}>
+                    <option disabled selected>Choose an example</option>
+                    {#each Object.keys(examples) as key}
+                        <option value={key}>{key}</option>
+                    {/each}
+                </select>
             </nav>
             <section class="p-2 border-stone-300 border-b">
-                {store.message}
+                {@html store.message}
             </section>
             <section class="flex-1" style="display:grid;grid-template-rows: 1fr 10px 1fr;">
                 <section class="flex-1 flex flex-col">
@@ -213,6 +224,7 @@
                             <table class="table bg-base-100 font-mono">
                                 <tbody>
                                 {#each store.globalTypes as [name, type]}
+                                    {#if store.topLevels.includes(name)}
                                     <tr class=" border border-stone-200">
                                         <td class="p-1.5 w-0">
                                             <div>{decode(name)[1]}</div>
@@ -227,6 +239,7 @@
                                             {/if}
                                         </td>
                                     </tr>
+                                    {/if}
                                 {/each}
                                 </tbody>
                             </table>
@@ -283,6 +296,7 @@
                             {#each store.getAvailableFixes() as fix, fixId}
                                 <li class="splide__slide">
                                     <button id={"fix" + fixId} class="min-w-72 bg-base-100 flex flex-col border rounded-md"
+                                            aria-hidden="true"
                                             class:border-stone-200={fixId !== store.selectedFix}
                                             class:border-primary={fixId === store.selectedFix}
                                             style="width: fit-content"
