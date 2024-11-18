@@ -1,4 +1,6 @@
 let defaultText: string = localStorage.getItem("user:text:0")
+let backendUrl = import.meta.env.DEV ? "http://localhost:8080" : "https://goanna-api.fly.dev"
+
 if (!defaultText) {
     defaultText = "x :: Int\nx = 1.0"
 }
@@ -75,6 +77,7 @@ type Identifier = {
     is_term: boolean
 }
 
+
 let text = $state<string>(defaultText)
 let typeErrors = $state<TypeError[]>([])
 let parsingErrors = $state<Range[]>([])
@@ -88,7 +91,7 @@ let inferredTypes = $state <GlobalType>({})
 let declarations = $state<string[]>([])
 let topLevels = $state<string[]>([])
 let selectedExample = $state<string | null>(null)
-
+let loading = $state<boolean>(false)
 
 let selectedFix = $derived(selectedFixByError[selectedError])
 
@@ -311,5 +314,37 @@ export function getStore() {
         set selectedExample(newSelectedExample: string | null) {
             selectedExample = newSelectedExample
         },
+        get loading(): boolean {
+            return loading
+        },
+        typeCheck: async function () {
+            loading = true
+            let buffer = $state.snapshot(text)
+            if (buffer.length === 0) {
+                buffer = "\n"
+            }
+            let request = await fetch(backendUrl+"/typecheck", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/plain"
+                },
+                body: buffer
+            })
+            loading = false
+            let response = await request.json()
+            this.nodeRange = response.NodeRange
+            this.parsingErrors = response.ParsingErrors
+            this.typeErrors = response.TypeErrors
+            this.importErrors = response.ImportErrors
+            this.inferredTypes = response.InferredTypes
+            this.declarations = response.Declarations
+            this.topLevels = response.TopLevels
+
+            if (response.TypeErrors.length > 0) {
+                this.setDefaultErrorFix()
+            } else {
+                this.resetErrorFix()
+            }
+        }
     }
 }

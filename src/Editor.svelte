@@ -25,6 +25,9 @@
                     from: 0, to: editorView.state.doc.length, insert: examples[store.selectedExample]
                 }
             })
+            store.typeCheck()
+            store.clearInput()
+
         }
     })
 

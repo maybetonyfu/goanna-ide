@@ -17,12 +17,12 @@
     import Left from "./icons/Left.svelte";
     import Right from "./icons/Right.svelte";
     import examples from "./lib/examples";
+
     let store = getStore()
     let interval = $state(null)
     let gutterVertical = $state(null)
     let gutterHorizontal = $state(null)
     let slider = $state(null)
-    let backendUrl = import.meta.env.DEV ? "http://localhost:8080" : "https://goanna-api.fly.dev"
 
     onMount(() => {
         slider = new Splide( '.splide', {
@@ -39,7 +39,7 @@
             store.chooseFix(index)
         })
 
-        typeCheck()
+        store.typeCheck()
 
         interval = setInterval(() => {
             if (store.editingInput) {
@@ -48,7 +48,7 @@
                 if (performance.now() - time > 500) {
                     store.clearInput()
                     localStorage.setItem("user:text:0", text)
-                    typeCheck()
+                    store.typeCheck()
                 }
             }
         }, 500)
@@ -102,49 +102,22 @@
         return changedKeys
     }
 
-    async function genProlog() {
-        let text = $state.snapshot(store.text)
-        if (text.length === 0) {
-            text = "\n"
-        }
-        let request = await fetch(backendUrl +"/prolog", {
-            method: "POST",
-            headers: {
-                "Content-Type": "text/plain"
-            },
-            body: text
-        })
-        let prolog = await request.text()
-        console.log(prolog)
-    }
+    // async function genProlog() {
+    //     let text = $state.snapshot(store.text)
+    //     if (text.length === 0) {
+    //         text = "\n"
+    //     }
+    //     let request = await fetch(backendUrl +"/prolog", {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "text/plain"
+    //         },
+    //         body: text
+    //     })
+    //     let prolog = await request.text()
+    //     console.log(prolog)
+    // }
 
-    async function typeCheck() {
-        let text = $state.snapshot(store.text)
-        if (text.length === 0) {
-            text = "\n"
-        }
-        let request = await fetch(backendUrl+"/typecheck", {
-            method: "POST",
-            headers: {
-                "Content-Type": "text/plain"
-            },
-            body: text
-        })
-        let response = await request.json()
-        store.nodeRange = response.NodeRange
-        store.parsingErrors = response.ParsingErrors
-        store.typeErrors = response.TypeErrors
-        store.importErrors = response.ImportErrors
-        store.inferredTypes = response.InferredTypes
-        store.declarations = response.Declarations
-        store.topLevels = response.TopLevels
-
-        if (response.TypeErrors.length > 0) {
-            store.setDefaultErrorFix()
-        } else {
-            store.resetErrorFix()
-        }
-    }
 
     $effect(() => {
         if (store.getAvailableFixes()) {
@@ -167,7 +140,6 @@
                         <option value={key}>{key}</option>
                     {/each}
                 </select>
-<!--                <button class="btn btn-sm btn-primary"> Type Check</button>-->
             </nav>
             <section class="p-2 border-stone-300 border-b">
                 {@html store.message}
@@ -185,27 +157,45 @@
                             <div class="absolute px-2 pb-2 w-full">
                                 <table class="table bg-base-100 font-mono">
                                     <tbody>
-                                    {#each Object.entries(store.getCurrentFix().LocalType) as [name, type]}
-                                        <tr class={"border border-stone-200 "
-                                + (store.shouldSpotlight(name) ? "" : "text-stone-300")}
-                                            onmouseenter={() => { store.setSpotlightNode(name) }}
-                                            onmouseleave={() => { store.setSpotlightNode(null) }}>
+                                    {#if store.loading}
+                                        <tr class=" border border-stone-200">
                                             <td class="p-1.5 w-0">
-                                    <span class={store.getCurrentError().CriticalNodes[name].Class
-                                     + (store.getCurrentFix().MCS.includes(+name) ? " mark-active-node": "")
-                                    }>
-                                        {store.getCurrentError().CriticalNodes[name].DisplayName}
-                                    </span>
-                                            </td>
-                                            <td class="p-1.5 w-0 font-bold text-stone-300 mx-1"> ::</td>
-                                            <td class="p-1.5 text-left">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
-                                            <td class="p-1.5 w-0">
-                                                <div class="flex badge hint--bottom-left hint--medium" aria-label="The type of this fragment changes based on which possible fix is chosen.">
-                                                    <Construction class="text-stone-500"></Construction>
-                                                </div>
+                                                <div class="skeleton h-4 w-ful"></div>
                                             </td>
                                         </tr>
-                                    {/each}
+                                        <tr class=" border border-stone-200">
+                                            <td class="p-1.5 w-0">
+                                                <div class="skeleton h-4 w-ful"></div>
+                                            </td>                                    </tr>
+                                        <tr class=" border border-stone-200">
+                                            <td class="p-1.5 w-0">
+                                                <div class="skeleton h-4 w-ful"></div>
+                                            </td>
+                                        </tr>
+                                    {:else}
+
+                                        {#each Object.entries(store.getCurrentFix().LocalType) as [name, type]}
+                                            <tr class={"border border-stone-200 "
+                                    + (store.shouldSpotlight(name) ? "" : "text-stone-300")}
+                                                onmouseenter={() => { store.setSpotlightNode(name) }}
+                                                onmouseleave={() => { store.setSpotlightNode(null) }}>
+                                                <td class="p-1.5 w-0">
+                                        <span class={store.getCurrentError().CriticalNodes[name].Class
+                                         + (store.getCurrentFix().MCS.includes(+name) ? " mark-active-node": "")
+                                        }>
+                                            {store.getCurrentError().CriticalNodes[name].DisplayName}
+                                        </span>
+                                                </td>
+                                                <td class="p-1.5 w-0 font-bold text-stone-300 mx-1"> ::</td>
+                                                <td class="p-1.5 text-left">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
+                                                <td class="p-1.5 w-0">
+                                                    <div class="flex badge hint--bottom-left hint--medium" aria-label="The type of this fragment changes based on which possible fix is chosen.">
+                                                        <Construction class="text-stone-500"></Construction>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {/each}
+                                    {/if}
                                     </tbody>
                                 </table>
                             </div>
@@ -224,22 +214,40 @@
                         <div class="absolute w-full px-2 pb-2">
                             <table class="table bg-base-100 font-mono">
                                 <tbody>
-                                {#each store.globalTypes as [name, type]}
+                                {#if store.loading}
                                     <tr class=" border border-stone-200">
                                         <td class="p-1.5 w-0">
-                                            <div>{decode(name)[1]}</div>
-                                        </td>
-                                        <td class="p-1.5 w-0 font-bold text-stone-300 mx-1"> ::</td>
-                                        <td class="p-1.5">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
-                                        <td class="p-1.5 w-0">
-                                            {#if keysWithChangedValues().includes(name)}
-                                                <div class="flex badge hint--bottom-left hint--medium" aria-label="The type of this variable changes based on which possible fix is chosen.">
-                                                    <Construction class="text-stone-500"></Construction>
-                                                </div>
-                                            {/if}
+                                            <div class="skeleton h-4 w-ful"></div>
                                         </td>
                                     </tr>
-                                {/each}
+                                    <tr class=" border border-stone-200">
+                                        <td class="p-1.5 w-0">
+                                            <div class="skeleton h-4 w-ful"></div>
+                                        </td>                                    </tr>
+                                    <tr class=" border border-stone-200">
+                                        <td class="p-1.5 w-0">
+                                            <div class="skeleton h-4 w-ful"></div>
+                                        </td>
+                                    </tr>
+                                {:else}
+
+                                    {#each store.globalTypes as [name, type]}
+                                        <tr class=" border border-stone-200">
+                                            <td class="p-1.5 w-0">
+                                                <div>{decode(name)[1]}</div>
+                                            </td>
+                                            <td class="p-1.5 w-0 font-bold text-stone-300 mx-1"> ::</td>
+                                            <td class="p-1.5">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
+                                            <td class="p-1.5 w-0">
+                                                {#if keysWithChangedValues().includes(name)}
+                                                    <div class="flex badge hint--bottom-left hint--medium" aria-label="The type of this variable changes based on which possible fix is chosen.">
+                                                        <Construction class="text-stone-500"></Construction>
+                                                    </div>
+                                                {/if}
+                                            </td>
+                                        </tr>
+                                    {/each}
+                                {/if}
                                 </tbody>
                             </table>
                         </div>
@@ -290,64 +298,64 @@
             </Header>
 
             <section class="splide" role="group" aria-label="Fixes">
-                <div class="splide__track">
-                    <ul class="splide__list">
-                            {#each store.getAvailableFixes() as fix, fixId}
-                                <li class="splide__slide">
-                                    <button id={"fix" + fixId} class="min-w-72 bg-base-100 flex flex-col border rounded-md"
-                                            aria-hidden="true"
-                                            class:border-stone-200={fixId !== store.selectedFix}
-                                            class:border-primary={fixId === store.selectedFix}
-                                            style="width: fit-content"
-                                            onclick={() => {
-                                                slider.go(fixId)
-                                            }}
-                                    >
-                                        <span class="w-full flex border-b border-stone-200 gap-2 items-center text-sm px-2 py-1">
-                                            <span class="">{fixId + 1} / {store.getCurrentError().Fixes.length}</span>
-                                            {#if store.selectedFix === fixId}
-                                                <span class="badge badge-sm badge-primary">Selected</span>
-                                            {/if}
-                                        </span>
+                    <div class="splide__track">
+                        <ul class="splide__list">
 
-                                        <Fix lines={fix.Snapshot}></Fix>
-                                    </button>
-                                </li>
-                            {/each}
-                        </ul>
-                    </div>
-            </section>
-            <section class="w-full flex gap-2 justify-center">
-                <button class="btn btn-sm" onclick={() => {
-                    if (store.selectedFix > 0) {
-                        slider.go(store.selectedFix - 1)
-                    }
-                }}>
-                    <Left></Left>
-                </button>
 
-                {#each store.getAvailableFixes() as fix, fixId}
-                    <button
-                            class="btn btn-sm"
-                            class:btn-primary={fixId === store.selectedFix}
-                            onclick={() => {
-                                slider.go(fixId)
-                            }}
-                    >
-                        {fixId + 1}
+                                {#each store.getAvailableFixes() as fix, fixId}
+                                    <li class="splide__slide">
+                                        <button id={"fix" + fixId} class="min-w-72 bg-base-100 flex flex-col border rounded-md"
+                                                aria-hidden="true"
+                                                class:border-stone-200={fixId !== store.selectedFix}
+                                                class:border-primary={fixId === store.selectedFix}
+                                                style="width: fit-content"
+                                                onclick={() => {
+                                                    slider.go(fixId)
+                                                }}
+                                        >
+                                            <span class="w-full flex border-b border-stone-200 gap-2 items-center text-sm px-2 py-1">
+                                                <span class="">{fixId + 1} / {store.getCurrentError().Fixes.length}</span>
+                                                {#if store.selectedFix === fixId}
+                                                    <span class="badge badge-sm badge-primary">Selected</span>
+                                                {/if}
+                                            </span>
+
+                                            <Fix lines={fix.Snapshot}></Fix>
+                                        </button>
+                                    </li>
+                                {/each}
+                            </ul>
+                        </div>
+                </section>
+                <section class="w-full flex gap-2 justify-center">
+                    <button class="btn btn-sm" onclick={() => {
+                        if (store.selectedFix > 0) {
+                            slider.go(store.selectedFix - 1)
+                        }
+                    }}>
+                        <Left></Left>
                     </button>
-                {/each}
 
-                <button class="btn btn-sm" onclick={() => {
-                    if (store.selectedFix < store.getAvailableFixes().length - 1) {
-                        slider.go(store.selectedFix + 1)
-                    }
-                }}>
-                    <Right></Right>
-                </button>
+                    {#each store.getAvailableFixes() as fix, fixId}
+                        <button
+                                class="btn btn-sm"
+                                class:btn-primary={fixId === store.selectedFix}
+                                onclick={() => {
+                                    slider.go(fixId)
+                                }}
+                        >
+                            {fixId + 1}
+                        </button>
+                    {/each}
 
-            </section>
-
+                    <button class="btn btn-sm" onclick={() => {
+                        if (store.selectedFix < store.getAvailableFixes().length - 1) {
+                            slider.go(store.selectedFix + 1)
+                        }
+                    }}>
+                        <Right></Right>
+                    </button>
+                </section>
 
 
     </footer>
