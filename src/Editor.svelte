@@ -1,5 +1,5 @@
 <script>
-    import {onMount} from "svelte";
+    import {onMount, untrack} from "svelte";
     import {EditorState} from "@codemirror/state"
     import {EditorView, lineNumbers, keymap} from "@codemirror/view"
     import {defaultKeymap} from "@codemirror/commands"
@@ -10,14 +10,14 @@
     import examples from "./lib/examples";
     let store = getStore()
     let editorElement = $state(null)
-    let editorView = $state(null)
+    let editorView
 
     function getPosition(line, col) {
         return editorView.state.doc.line(line + 1).from + col
     }
 
     $effect(() => {
-        if (editorView !== null && store.selectedExample !== null) {
+        if (editorView !== null && store.selectedExample) {
             clearSpotlights(editorView)
             clearHighlights(editorView)
             editorView.dispatch({
@@ -25,8 +25,9 @@
                     from: 0, to: editorView.state.doc.length, insert: examples[store.selectedExample]
                 }
             })
-            store.typeCheck()
-            store.clearInput()
+            untrack(() => {
+                store.typeCheck()
+            })
 
         }
     })
@@ -50,10 +51,6 @@
             })
         }
     })
-
-
-
-
 
     onMount(() => {
         editorView = new EditorView({

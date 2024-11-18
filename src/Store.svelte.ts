@@ -345,6 +345,7 @@ export function getStore() {
             } else {
                 this.resetErrorFix()
             }
+            this.clearInput()
         }
     }
 }
