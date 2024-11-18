@@ -224,7 +224,6 @@
                             <table class="table bg-base-100 font-mono">
                                 <tbody>
                                 {#each store.globalTypes as [name, type]}
-                                    {#if store.topLevels.includes(name)}
                                     <tr class=" border border-stone-200">
                                         <td class="p-1.5 w-0">
                                             <div>{decode(name)[1]}</div>
@@ -239,7 +238,6 @@
                                             {/if}
                                         </td>
                                     </tr>
-                                    {/if}
                                 {/each}
                                 </tbody>
                             </table>

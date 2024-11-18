@@ -42,9 +42,11 @@ type Span = {
     Node: number
     Type: string
 }
+
 type LocalType = {
     [key: number]: string
 }
+
 type GlobalType = {
     [key: string]: string
 }
@@ -80,13 +82,15 @@ let importErrors = $state<Identifier[]>([])
 let nodeRange = $state<NodeRange>({})
 let selectedError = $state<number | null>(null)
 let selectedFixByError = $state<ErrorFixTable>({})
-let selectedFix = $derived(selectedFixByError[selectedError])
 let spotlightNode = $state<number>(null)
 let editingInput = $state<number | null>(null) // for automatically running type-check in the background
-let inferredTypes = $state < GlobalType>({})
+let inferredTypes = $state <GlobalType>({})
 let declarations = $state<string[]>([])
 let topLevels = $state<string[]>([])
 let selectedExample = $state<string | null>(null)
+
+
+let selectedFix = $derived(selectedFixByError[selectedError])
 
 function assignColors(errors) {
     errors.forEach((error, i) => {
@@ -104,6 +108,7 @@ export function getStore() {
         set text(newText: string) {
             text = newText
         },
+
         get parsingErrors(): Range[] {
             return parsingErrors
         },
@@ -277,7 +282,7 @@ export function getStore() {
             } else {
                 globalType = inferredTypes
             }
-            return declarations
+            return topLevels
                 .map(d => ([d, globalType[d]] as [string, string]))
                 .filter(([name, type]) =>  !name.startsWith('p_'))
         },
