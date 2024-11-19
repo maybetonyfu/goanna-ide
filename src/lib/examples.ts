@@ -70,7 +70,7 @@ x = [x + y | x <- [1..3], y <- ['1'..'4']]
 
 
 examples["ZipWith"] = `
-distence x y = (x + y) * (x - y)
+distance x y = (x + y) * (x - y)
 
 distances xs ys = zipWith distence xs ys
 
