@@ -68,6 +68,10 @@ examples["List comprehension"] = `
 x = [x + y | x <- [1..3], y <- ['1'..'4']]
 `.trim()
 
+examples["Function composition"] = `
+x = (=="10") . length .  map (+1) $ [1..10]
+`.trim()
+
 
 examples["ZipWith"] = `
 distance x y = (x + y) * (x - y)
