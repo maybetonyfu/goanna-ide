@@ -126,7 +126,7 @@
                         <option value={key}>{key}</option>
                     {/each}
                 </select>
-                <button class="btn btn-sm" onclick={store.prolog}>Prolog</button>
+<!--                <button class="btn btn-sm" onclick={store.prolog}>Prolog</button>-->
             </nav>
             <section class="p-2 border-stone-300 border-b">
                 {@html store.message}
