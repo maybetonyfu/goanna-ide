@@ -76,7 +76,7 @@ x = (=="10") . length .  map (+1) $ [1..10]
 examples["ZipWith"] = `
 distance x y = (x + y) * (x - y)
 
-distances xs ys = zipWith distence xs ys
+distances xs ys = zipWith distance xs ys
 
 sumDistances :: Int
 sumDistances = distances [1 ,3] [2, 4]`
