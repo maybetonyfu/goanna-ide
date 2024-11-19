@@ -22,23 +22,9 @@
     let interval = $state(null)
     let gutterVertical = $state(null)
     let gutterHorizontal = $state(null)
-    let slider = $state(null)
+    let slider = null
 
     onMount(() => {
-        slider = new Splide( '.splide', {
-            gap: '1rem',
-            autoWidth: true,
-            autoHeight: true,
-            arrows: false,
-            pagination: false,
-            padding: {top: '1rem', bottom: '2rem'},
-            focus: 0,
-        }).mount();
-
-        slider.on('move', (index) => {
-            store.chooseFix(index)
-        })
-
         store.typeCheck()
 
         interval = setInterval(() => {
@@ -102,26 +88,26 @@
         return changedKeys
     }
 
-    // async function genProlog() {
-    //     let text = $state.snapshot(store.text)
-    //     if (text.length === 0) {
-    //         text = "\n"
-    //     }
-    //     let request = await fetch(backendUrl +"/prolog", {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "text/plain"
-    //         },
-    //         body: text
-    //     })
-    //     let prolog = await request.text()
-    //     console.log(prolog)
-    // }
 
 
     $effect(() => {
         if (store.getAvailableFixes()) {
-            slider.refresh()
+            if (slider) {
+                slider.destroy()
+            }
+            slider = new Splide( '.splide', {
+                gap: '1rem',
+                autoWidth: true,
+                autoHeight: true,
+                arrows: false,
+                pagination: false,
+                padding: {top: '1rem', bottom: '2rem'},
+                focus: 0,
+            }).mount();
+
+            slider.on('move', (index) => {
+                store.chooseFix(index)
+            })
         }
     })
 
@@ -140,6 +126,7 @@
                         <option value={key}>{key}</option>
                     {/each}
                 </select>
+                <button class="btn btn-sm" onclick={store.prolog}>Prolog</button>
             </nav>
             <section class="p-2 border-stone-300 border-b">
                 {@html store.message}
@@ -300,8 +287,6 @@
             <section class="splide" role="group" aria-label="Fixes">
                     <div class="splide__track">
                         <ul class="splide__list">
-
-
                                 {#each store.getAvailableFixes() as fix, fixId}
                                     <li class="splide__slide">
                                         <button id={"fix" + fixId} class="min-w-72 bg-base-100 flex flex-col border rounded-md"
@@ -329,9 +314,7 @@
                 </section>
                 <section class="w-full flex gap-2 justify-center">
                     <button class="btn btn-sm" onclick={() => {
-                        if (store.selectedFix > 0) {
-                            slider.go(store.selectedFix - 1)
-                        }
+                         slider.go("'-1'")
                     }}>
                         <Left></Left>
                     </button>
@@ -349,9 +332,7 @@
                     {/each}
 
                     <button class="btn btn-sm" onclick={() => {
-                        if (store.selectedFix < store.getAvailableFixes().length - 1) {
-                            slider.go(store.selectedFix + 1)
-                        }
+                        slider.go("'+1'")
                     }}>
                         <Right></Right>
                     </button>

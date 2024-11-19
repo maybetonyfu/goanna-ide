@@ -346,6 +346,21 @@ export function getStore() {
                 this.resetErrorFix()
             }
             this.clearInput()
+        },
+        prolog: async function() {
+            let buffer = $state.snapshot(text)
+            if (buffer.length === 0) {
+                buffer = "\n"
+            }
+            let request = await fetch(backendUrl +"/prolog", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/plain"
+                },
+                body: buffer
+            })
+            let prolog = await request.text()
+            console.log(prolog)
         }
     }
 }

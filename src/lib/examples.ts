@@ -12,12 +12,25 @@ y :: V
 y = X '3'
 `.trim()
 
+examples["Type variables"] = `
+x :: a -> b -> a
+x a b = b
+`.trim()
 
 examples['Let expression'] = `
 x :: Char
 x = let y = 1 in let z = y in let w = z in w
 `.trim()
 
+examples['Case expression'] = `
+parsingStringFlat flag =
+  case flag of
+        "True" -> 1
+        False -> 2
+        "True1" -> 3
+        "False2" -> 4
+        _ -> 0
+        `.trim()
 
 examples["Multiple Errors"] = `
 x :: Int
@@ -30,6 +43,12 @@ z = if True then 1 else '2'
 
 `.trim()
 
+
+examples['List 1'] = `
+applyToAll :: [a] -> (a -> b) -> [b]
+applyToAll [] _ = []
+applyToAll (x:xs) f = f x : applyToAll f xs
+`.trim()
 
 examples["Applicative"] = `
 x = (+) <$> [1,2,3,4] <*> ['1', '2', '3']
@@ -48,5 +67,15 @@ x = do
 examples["List comprehension"] = `
 x = [x + y | x <- [1..3], y <- ['1'..'4']]
 `.trim()
+
+
+examples["ZipWith"] = `
+distence x y = (x + y) * (x - y)
+
+distances xs ys = zipWith distence xs ys
+
+sumDistances :: Int
+sumDistances = distances [1 ,3] [2, 4]`
+
 
 export default examples
