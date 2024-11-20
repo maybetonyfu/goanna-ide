@@ -118,6 +118,9 @@
     <section class="flex-1" style="display:grid;grid-template-columns: 1fr 10px 2fr;">
         <aside class="flex flex-col">
             <nav class="p-2 flex items-center gap-2 border-stone-300 border-b">
+                <a href="https://goanna.typecheck.me">
+                    <img src="/goanna.svg" alt="Goanna" class="w-10 h-10" />
+                </a>
                 <select class="select select-sm" onchange={(e) => {
                        store.selectedExample = e.currentTarget.value
                 }}>
