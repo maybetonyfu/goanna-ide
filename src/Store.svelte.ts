@@ -1,3 +1,5 @@
+import pRetry from 'p-retry';
+
 let defaultText: string = localStorage.getItem("user:text:0")
 let backendUrl = import.meta.env.DEV ? "http://localhost:8080" : "https://goanna-api.fly.dev"
 
@@ -289,6 +291,12 @@ export function getStore() {
                 .map(d => ([d, globalType[d]] as [string, string]))
                 .filter(([name, type]) =>  !name.startsWith('p_'))
         },
+        get localTypes() : [string, string][] {
+            if (selectedError === null || selectedFix === null || selectedFix === undefined) {
+                return []
+            }
+            return Object.entries(this.getCurrentFix().LocalType)
+        },
         get message(): string {
             if (parsingErrors.length > 0) {
                 return "Main.hs contains invalid Haskell syntax."
@@ -323,13 +331,13 @@ export function getStore() {
             if (buffer.length === 0) {
                 buffer = "\n"
             }
-            let request = await fetch(backendUrl+"/typecheck", {
+            let request = await pRetry(_ => fetch(backendUrl+"/typecheck", {
                 method: "POST",
                 headers: {
                     "Content-Type": "text/plain"
                 },
                 body: buffer
-            })
+            }), {retries: 2})
             loading = false
             let response = await request.json()
             this.nodeRange = response.NodeRange
@@ -352,13 +360,14 @@ export function getStore() {
             if (buffer.length === 0) {
                 buffer = "\n"
             }
-            let request = await fetch(backendUrl +"/prolog", {
+            let request = await pRetry(_ => fetch(backendUrl +"/prolog", {
                 method: "POST",
                 headers: {
                     "Content-Type": "text/plain"
                 },
                 body: buffer
-            })
+            }), {retries: 2})
+
             let prolog = await request.text()
             console.log(prolog)
         }

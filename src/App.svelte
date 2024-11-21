@@ -143,7 +143,6 @@
                     </div>
 
                     <div class="relative overflow-scroll h-full">
-                        {#if store.hasErrorAndFix()}
                             <div class="absolute px-2 pb-2 w-full">
                                 <table class="table bg-base-100 font-mono">
                                     <tbody>
@@ -164,7 +163,7 @@
                                         </tr>
                                     {:else}
 
-                                        {#each Object.entries(store.getCurrentFix().LocalType) as [name, type]}
+                                        {#each store.localTypes as [name, type]}
                                             <tr class={"border border-stone-200 "
                                     + (store.shouldSpotlight(name) ? "" : "text-stone-300")}
                                                 onmouseenter={() => { store.setSpotlightNode(name) }}
@@ -189,7 +188,6 @@
                                     </tbody>
                                 </table>
                             </div>
-                        {/if}
                     </div>
                 </section>
                 <Gutter direction="horizontal" bind:dom={gutterHorizontal}></Gutter>
@@ -292,11 +290,13 @@
                         <ul class="splide__list">
                                 {#each store.getAvailableFixes() as fix, fixId}
                                     <li class="splide__slide">
-                                        <button id={"fix" + fixId} class="min-w-72 bg-base-100 flex flex-col border rounded-md"
-                                                aria-hidden="true"
+                                        <div id={"fix" + fixId} class="min-w-72 bg-base-100 flex flex-col border rounded-md cursor-pointer"
                                                 class:border-stone-200={fixId !== store.selectedFix}
                                                 class:border-primary={fixId === store.selectedFix}
+                                                tabindex="0"
+                                                role="button"
                                                 style="width: fit-content"
+                                                onkeydown={_ => slider.go(fixId)}
                                                 onclick={() => {
                                                     slider.go(fixId)
                                                 }}
@@ -309,7 +309,7 @@
                                             </span>
 
                                             <Fix lines={fix.Snapshot}></Fix>
-                                        </button>
+                                        </div>
                                     </li>
                                 {/each}
                             </ul>
