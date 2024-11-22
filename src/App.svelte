@@ -27,6 +27,20 @@
     onMount(() => {
         store.typeCheck()
 
+        slider = new Splide( '.splide', {
+            gap: '1rem',
+            autoWidth: true,
+            autoHeight: true,
+            arrows: false,
+            pagination: false,
+            padding: {top: '1rem', bottom: '2rem'},
+            focus: 0,
+        }).mount();
+
+        slider.on('active', (s) => {
+            store.chooseFix(s.index)
+        })
+
         interval = setInterval(() => {
             if (store.editingInput) {
                 let time = $state.snapshot(store.editingInput)
@@ -92,22 +106,7 @@
 
     $effect(() => {
         if (store.getAvailableFixes()) {
-            if (slider) {
-                slider.destroy()
-            }
-            slider = new Splide( '.splide', {
-                gap: '1rem',
-                autoWidth: true,
-                autoHeight: true,
-                arrows: false,
-                pagination: false,
-                padding: {top: '1rem', bottom: '2rem'},
-                focus: 0,
-            }).mount();
-
-            slider.on('move', (index) => {
-                store.chooseFix(index)
-            })
+            slider.refresh()
         }
     })
 
@@ -129,7 +128,6 @@
                         <option value={key}>{key}</option>
                     {/each}
                 </select>
-<!--                <button class="btn btn-sm" onclick={store.prolog}>Prolog</button>-->
             </nav>
             <section class="p-2 border-stone-300 border-b">
                 {@html store.message}

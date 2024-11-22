@@ -366,7 +366,7 @@ export function getStore() {
                     "Content-Type": "text/plain"
                 },
                 body: buffer
-            }), {retries: 2})
+            }), {retries: 5})
 
             let prolog = await request.text()
             console.log(prolog)
