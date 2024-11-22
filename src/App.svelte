@@ -37,7 +37,8 @@
             focus: 0,
         }).mount();
 
-        slider.on('active', (s) => {
+        slider.on('click', (s) => {
+            slider.go(s.index)
             store.chooseFix(s.index)
         })
 
@@ -294,10 +295,6 @@
                                                 tabindex="0"
                                                 role="button"
                                                 style="width: fit-content"
-                                                onkeydown={_ => slider.go(fixId)}
-                                                onclick={() => {
-                                                    slider.go(fixId)
-                                                }}
                                         >
                                             <span class="w-full flex border-b border-stone-200 gap-2 items-center text-sm px-2 py-1">
                                                 <span class="">{fixId + 1} / {store.getCurrentError().Fixes.length}</span>
@@ -316,6 +313,7 @@
                 <section class="w-full flex gap-2 justify-center">
                     <button class="btn btn-sm" onclick={() => {
                          slider.go("'-1'")
+                         store.chooseFix(slider.index)
                     }}>
                         <Left></Left>
                     </button>
@@ -326,6 +324,7 @@
                                 class:btn-primary={fixId === store.selectedFix}
                                 onclick={() => {
                                     slider.go(fixId)
+                                    store.chooseFix(slider.index)
                                 }}
                         >
                             {fixId + 1}
@@ -334,6 +333,8 @@
 
                     <button class="btn btn-sm" onclick={() => {
                         slider.go("'+1'")
+                        store.chooseFix(slider.index)
+
                     }}>
                         <Right></Right>
                     </button>

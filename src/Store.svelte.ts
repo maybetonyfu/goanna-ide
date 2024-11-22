@@ -1,4 +1,4 @@
-import pRetry from 'p-retry';
+import retry from './lib/retry';
 
 let defaultText: string = localStorage.getItem("user:text:0")
 let backendUrl = import.meta.env.DEV ? "http://localhost:8080" : "https://goanna-api.fly.dev"
@@ -331,13 +331,13 @@ export function getStore() {
             if (buffer.length === 0) {
                 buffer = "\n"
             }
-            let request = await pRetry(_ => fetch(backendUrl+"/typecheck", {
+            let request = await retry(() => fetch(backendUrl+"/typecheck", {
                 method: "POST",
                 headers: {
                     "Content-Type": "text/plain"
                 },
                 body: buffer
-            }), {retries: 2})
+            }), 3, 1000)
             loading = false
             let response = await request.json()
             this.nodeRange = response.NodeRange
@@ -360,13 +360,13 @@ export function getStore() {
             if (buffer.length === 0) {
                 buffer = "\n"
             }
-            let request = await pRetry(_ => fetch(backendUrl +"/prolog", {
+            let request = await retry(() => fetch(backendUrl +"/prolog", {
                 method: "POST",
                 headers: {
                     "Content-Type": "text/plain"
                 },
                 body: buffer
-            }), {retries: 5})
+            }), 3, 1000)
 
             let prolog = await request.text()
             console.log(prolog)
