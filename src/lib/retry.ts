@@ -1,8 +1,9 @@
 async function retry<T>(fn: () => Promise<T>, max: number, delay: number)   {
     let attempt = 0
+    let response = null
     while (attempt < max) {
         try {
-            return await fn()
+            response = await fn()
         } catch (e) {
             console.log(e)
             // @ts-ignore
@@ -10,6 +11,10 @@ async function retry<T>(fn: () => Promise<T>, max: number, delay: number)   {
             attempt++
         }
     }
+    if (response === null) {
+        throw new Error("Failed to fetch")
+    }
+    return response
 }
 
 export default retry
