@@ -34,8 +34,9 @@
     })
 
     $effect(() => {
-        if (editorView === null) return
-        dispatchHighlights(editorView, $state.snapshot(store.highlights).map(hl => {
+        let lighlights = $state.snapshot(store.highlights)
+        if (editorView === null || editorView === undefined) return
+        dispatchHighlights(editorView,lighlights.map(hl => {
             return {
                 from: getPosition(hl.from[0], hl.from[1]),
                 to: getPosition(hl.to[0], hl.to[1]),

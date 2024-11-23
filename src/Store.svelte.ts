@@ -5,11 +5,12 @@ let defaultText: string = "x :: Int\nx = 1.0"
 let backendUrl = import.meta.env.DEV ? "http://localhost:8080" : "https://goanna-api.fly.dev"
 let defaultExample = new URLSearchParams(window.location.search).get('example');
 
-if (!Object.keys(examples).includes(defaultExample)) {
-    defaultExample = null
+if (!Object.keys(examples).includes(defaultExample) || defaultExample === null) {
+    defaultExample = "default"
 }
 
-if (defaultExample!== null) {
+
+if (defaultExample !== "default") {
     defaultText = examples[defaultExample]
 }
 
@@ -343,7 +344,7 @@ export function getStore() {
                     "Content-Type": "text/plain"
                 },
                 body: buffer
-            }), 3, 1000)
+            }), 5, 1000)
             loading = false
             let response = await request.json()
             this.nodeRange = response.NodeRange

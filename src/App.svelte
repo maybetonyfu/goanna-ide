@@ -24,6 +24,9 @@
     let gutterHorizontal = $state(null)
     let slider = null
 
+
+
+
     onMount(() => {
         store.typeCheck()
         slider = new Splide( '.splide', {
@@ -116,8 +119,8 @@
                 <a href="https://goanna.typecheck.me">
                     <img src="/goanna.svg" alt="Goanna" class="w-10 h-10" />
                 </a>
-                <select class="select select-sm" bind:value={store.selectedExample}>
-                    <option disabled selected>Choose an example</option>
+                <select class="select select-primary select-sm" bind:value={store.selectedExample}>
+                    <option disabled selected value="default">Choose an example</option>
                     {#each Object.keys(examples) as key}
                         <option value={key}>{key}</option>
                     {/each}
