@@ -338,13 +338,13 @@ export function getStore() {
             if (buffer.length === 0) {
                 buffer = "\n"
             }
-            let request = await retry(() => fetch(backendUrl+"/typecheck", {
+            let request = await  fetch(backendUrl+"/typecheck", {
                 method: "POST",
                 headers: {
                     "Content-Type": "text/plain"
                 },
                 body: buffer
-            }), 5, 1000)
+            })
             loading = false
             let response = await request.json()
             this.nodeRange = response.NodeRange

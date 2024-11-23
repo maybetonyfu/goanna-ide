@@ -125,9 +125,15 @@
                         <option value={key}>{key}</option>
                     {/each}
                 </select>
+
             </nav>
             <section class="p-2 border-stone-300 border-b">
                 {@html store.message}
+                <div>
+                    <button class="btn btn-xs btn-secondary" onclick={store.prolog}>Prolog</button>
+                    <button class="btn btn-xs btn-primary" onclick={store.typeCheck}>Type Check</button>
+
+                </div>
             </section>
             <section class="flex-1" style="display:grid;grid-template-rows: 1fr 10px 1fr;">
                 <section class="flex-1 flex flex-col">
