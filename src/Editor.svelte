@@ -17,7 +17,8 @@
     }
 
     $effect(() => {
-        if (editorView !== null && store.selectedExample) {
+        if (store.selectedExample) {
+            if (editorView === null || editorView === undefined ) return
             clearSpotlights(editorView)
             clearHighlights(editorView)
             editorView.dispatch({

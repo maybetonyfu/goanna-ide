@@ -26,7 +26,6 @@
 
     onMount(() => {
         store.typeCheck()
-
         slider = new Splide( '.splide', {
             gap: '1rem',
             autoWidth: true,
@@ -45,10 +44,8 @@
         interval = setInterval(() => {
             if (store.editingInput) {
                 let time = $state.snapshot(store.editingInput)
-                let text = $state.snapshot(store.text)
                 if (performance.now() - time > 500) {
                     store.clearInput()
-                    localStorage.setItem("user:text:0", text)
                     store.typeCheck()
                 }
             }
@@ -71,8 +68,6 @@
     })
 
     onDestroy(() => {
-        let text = $state.snapshot(store.text)
-        localStorage.setItem("user:text:0", text)
         if (interval) {
             clearInterval(interval)
         }
@@ -121,9 +116,7 @@
                 <a href="https://goanna.typecheck.me">
                     <img src="/goanna.svg" alt="Goanna" class="w-10 h-10" />
                 </a>
-                <select class="select select-sm" onchange={(e) => {
-                       store.selectedExample = e.currentTarget.value
-                }}>
+                <select class="select select-sm" bind:value={store.selectedExample}>
                     <option disabled selected>Choose an example</option>
                     {#each Object.keys(examples) as key}
                         <option value={key}>{key}</option>

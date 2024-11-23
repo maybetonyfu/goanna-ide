@@ -1,10 +1,16 @@
 import retry from './lib/retry';
+import examples from "./lib/examples";
 
-let defaultText: string = localStorage.getItem("user:text:0")
+let defaultText: string = "x :: Int\nx = 1.0"
 let backendUrl = import.meta.env.DEV ? "http://localhost:8080" : "https://goanna-api.fly.dev"
+let defaultExample = new URLSearchParams(window.location.search).get('example');
 
-if (!defaultText) {
-    defaultText = "x :: Int\nx = 1.0"
+if (!Object.keys(examples).includes(defaultExample)) {
+    defaultExample = null
+}
+
+if (defaultExample!== null) {
+    defaultText = examples[defaultExample]
 }
 
 interface Range {
@@ -92,7 +98,7 @@ let editingInput = $state<number | null>(null) // for automatically running type
 let inferredTypes = $state <GlobalType>({})
 let declarations = $state<string[]>([])
 let topLevels = $state<string[]>([])
-let selectedExample = $state<string | null>(null)
+let selectedExample = $state<string | null>(defaultExample)
 let loading = $state<boolean>(false)
 
 let selectedFix = $derived(selectedFixByError[selectedError])
