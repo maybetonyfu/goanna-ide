@@ -1,7 +1,7 @@
 import retry from './lib/retry';
 import examples from "./lib/examples";
 
-let defaultText: string = "x :: Int\nx = 1.0"
+let defaultText: string = "-- choose an example from the dropdown on the left, or write some Haskell code here"
 let backendUrl = import.meta.env.DEV ? "http://localhost:8080" : "https://goanna-api.fly.dev"
 let defaultExample = new URLSearchParams(window.location.search).get('example');
 

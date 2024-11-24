@@ -84,7 +84,8 @@
 <style>
     :global(.cm-editor) {
         height: 100%;
-        background-color: oklch(0.961151 0 0);
+        background-color: oklch(var(--b2));
+        color: oklch(var(--bc));
     }
     :global(.cm-editor.cm-focused) {
         outline: none;
@@ -95,8 +96,14 @@
         line-height: 24px;
 
     }
+    :global(.cm-editor .cm-gutters) {
+        background-color: oklch(var(--b1));
+        border: none;
+        opacity: 0.5;
+        color: oklch(var(--bc));
+    }
+
     :global(.cm-gutter) {
-        /*line-height: 32px;*/
         line-height: 24px;
 
     }

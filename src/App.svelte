@@ -17,14 +17,13 @@
     import Left from "./icons/Left.svelte";
     import Right from "./icons/Right.svelte";
     import examples from "./lib/examples";
+    import Branch from "./icons/Branch.svelte";
 
     let store = getStore()
     let interval = $state(null)
     let gutterVertical = $state(null)
     let gutterHorizontal = $state(null)
     let slider = null
-
-
 
 
     onMount(() => {
@@ -115,105 +114,108 @@
 <main class="h-full flex flex-col">
     <section class="flex-1" style="display:grid;grid-template-columns: 1fr 10px 2fr;">
         <aside class="flex flex-col">
-            <nav class="p-2 flex items-center gap-2 border-stone-300 border-b">
-                <a href="https://goanna.typecheck.me">
-                    <img src="/goanna.svg" alt="Goanna" class="w-10 h-10" />
-                </a>
-                <select class="select select-primary select-sm" bind:value={store.selectedExample}>
-                    <option disabled selected value="default">Choose an example</option>
-                    {#each Object.keys(examples) as key}
-                        <option value={key}>{key}</option>
-                    {/each}
-                </select>
+            <section class="flex flex-col gap-3 py-4 px-2 border-base-300  border-b">
+                <div class="flex items-center gap-3">
+                    <img src="/goanna.svg" class="w-12 h-12" alt="Goanna Logo"/>
+                    <select class="select select-primary select-sm w-full" bind:value={store.selectedExample}>
+                        <option disabled selected value="default">Choose an example</option>
+                        {#each Object.keys(examples) as key}
+                            <option value={key}>{key}</option>
+                        {/each}
+                    </select>
+                </div>
 
-            </nav>
-            <section class="p-2 border-stone-300 border-b">
-                {@html store.message}
-                <div>
-                    <button class="btn btn-xs btn-secondary" onclick={store.prolog}>Prolog</button>
-                    <button class="btn btn-xs btn-primary" onclick={store.typeCheck}>Type Check</button>
+                <div class="card card-compact bg-base-300 text-base-content">
+                    <div class=card-body >
+                        {@html store.message}
+                        <div class="card-actions">
+                            <button class="btn btn-xs btn-secondary text-secondary-content"  onclick={store.prolog}>Prolog</button>
+                            <button class="btn btn-xs btn-primary  text-primary-content" onclick={store.typeCheck}>Type Check</button>
+                        </div>
+                    </div>
 
                 </div>
+
+
             </section>
             <section class="flex-1" style="display:grid;grid-template-rows: 1fr 10px 1fr;">
                 <section class="flex-1 flex flex-col">
-                    <div class="p-2">
+                    <div class="pt-4 p-2">
                         <Header text="Local Types">
                             <Magnify></Magnify>
                         </Header>
                     </div>
 
                     <div class="relative overflow-scroll h-full">
-                            <div class="absolute px-2 pb-2 w-full">
-                                <table class="table bg-base-100 font-mono">
-                                    <tbody>
-                                    {#if store.loading}
-                                        <tr class=" border border-stone-200">
-                                            <td class="p-1.5 w-0">
-                                                <div class="skeleton h-4 w-ful"></div>
-                                            </td>
-                                        </tr>
-                                        <tr class=" border border-stone-200">
-                                            <td class="p-1.5 w-0">
-                                                <div class="skeleton h-4 w-ful"></div>
-                                            </td>                                    </tr>
-                                        <tr class=" border border-stone-200">
-                                            <td class="p-1.5 w-0">
-                                                <div class="skeleton h-4 w-ful"></div>
-                                            </td>
-                                        </tr>
-                                    {:else}
+                        <div class="absolute px-2 pb-2 w-full">
+                            <table class="table bg-base-100 font-mono">
+                                <tbody>
+                                {#if store.loading}
+                                    <tr class=" border border-base-300">
+                                        <td class="p-1.5 w-0">
+                                            <div class="skeleton h-4 w-ful"></div>
+                                        </td>
+                                    </tr>
+                                    <tr class=" border border-base-300">
+                                        <td class="p-1.5 w-0">
+                                            <div class="skeleton h-4 w-ful"></div>
+                                        </td>                                    </tr>
+                                    <tr class=" border borderbase-300">
+                                        <td class="p-1.5 w-0">
+                                            <div class="skeleton h-4 w-ful"></div>
+                                        </td>
+                                    </tr>
+                                {:else}
 
-                                        {#each store.localTypes as [name, type]}
-                                            <tr class={"border border-stone-200 "
-                                    + (store.shouldSpotlight(name) ? "" : "text-stone-300")}
-                                                onmouseenter={() => { store.setSpotlightNode(name) }}
-                                                onmouseleave={() => { store.setSpotlightNode(null) }}>
-                                                <td class="p-1.5 w-0">
-                                        <span class={store.getCurrentError().CriticalNodes[name].Class
-                                         + (store.getCurrentFix().MCS.includes(+name) ? " mark-active-node": "")
-                                        }>
-                                            {store.getCurrentError().CriticalNodes[name].DisplayName}
-                                        </span>
-                                                </td>
-                                                <td class="p-1.5 w-0 font-bold text-stone-300 mx-1"> ::</td>
-                                                <td class="p-1.5 text-left">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
-                                                <td class="p-1.5 w-0">
-                                                    <div class="flex badge hint--bottom-left hint--medium" aria-label="The type of this fragment changes based on which possible fix is chosen.">
-                                                        <Construction class="text-stone-500"></Construction>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        {/each}
-                                    {/if}
-                                    </tbody>
-                                </table>
-                            </div>
+                                    {#each store.localTypes as [name, type]}
+                                        <tr class={"border border-base-300"}
+                                            class:text-base-300={!store.shouldSpotlight(name)}
+                                            onmouseenter={() => { store.setSpotlightNode(name) }}
+                                            onmouseleave={() => { store.setSpotlightNode(null) }}>
+                                            <td class="p-1.5 w-0">
+                                    <span class={store.getCurrentError().CriticalNodes[name].Class
+                                     + (store.getCurrentFix().MCS.includes(+name) ? " mark-active-node": "")
+                                    }>
+                                        {store.getCurrentError().CriticalNodes[name].DisplayName}
+                                    </span>
+                                            </td>
+                                            <td class="p-1.5 w-0 font-bold text-base-300 mx-1"> ::</td>
+                                            <td class="p-1.5 text-left">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
+                                            <td class="p-1.5 w-0">
+                                                <div class="badge badge-secondary hint--bottom-left hint--medium" aria-label="The type of this fragment changes based on which possible fix is chosen.">
+                                                    <Branch class=""></Branch>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {/each}
+                                {/if}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </section>
                 <Gutter direction="horizontal" bind:dom={gutterHorizontal}></Gutter>
-                <section class="flex-1 border-t border-stone-300 flex flex-col">
-                    <div class="flex justify-between items-center gap-4 p-2">
+                <section class="flex-1 flex flex-col">
+                    <div class="flex justify-between items-center gap-4 pt-4 p-2">
                         <Header text="Global Types">
                             <Global></Global>
                         </Header>
-
                     </div>
                     <div class="relative overflow-scroll h-full">
                         <div class="absolute w-full px-2 pb-2">
                             <table class="table bg-base-100 font-mono">
                                 <tbody>
                                 {#if store.loading}
-                                    <tr class=" border border-stone-200">
+                                    <tr class=" border border-base-300">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
                                         </td>
                                     </tr>
-                                    <tr class=" border border-stone-200">
+                                    <tr class=" border border-base-300">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
                                         </td>                                    </tr>
-                                    <tr class=" border border-stone-200">
+                                    <tr class=" border border-base-300">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
                                         </td>
@@ -221,16 +223,16 @@
                                 {:else}
 
                                     {#each store.globalTypes as [name, type]}
-                                        <tr class=" border border-stone-200">
+                                        <tr class=" border border-base-300">
                                             <td class="p-1.5 w-0">
                                                 <div>{decode(name)[1]}</div>
                                             </td>
-                                            <td class="p-1.5 w-0 font-bold text-stone-300 mx-1"> ::</td>
+                                            <td class="p-1.5 w-0 font-bold text-base-300 mx-1"> ::</td>
                                             <td class="p-1.5">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
                                             <td class="p-1.5 w-0">
                                                 {#if keysWithChangedValues().includes(name)}
-                                                    <div class="flex badge hint--bottom-left hint--medium" aria-label="The type of this variable changes based on which possible fix is chosen.">
-                                                        <Construction class="text-stone-500"></Construction>
+                                                    <div class="badge badge-secondary hint--bottom-left hint--medium" aria-label="The type of this variable changes based on which possible fix is chosen.">
+                                                        <Branch class=""></Branch>
                                                     </div>
                                                 {/if}
                                             </td>
@@ -241,19 +243,18 @@
                             </table>
                         </div>
                     </div>
-
                 </section>
             </section>
 
         </aside>
         <Gutter bind:dom={gutterVertical} direction="vertical"></Gutter>
-        <article class="border-stone-300 border-l flex flex-col">
-            <span class="border-b border-stone-300 px-2 py-1 flex items-center gap-2">
+        <article class="flex flex-col">
+            <span class="px-2 py-1 flex items-center gap-2">
                 <Haskell class="text-primary"></Haskell>
                 <span class="mr-1">Main.hs</span>
-                {#each store.typeErrors as error, errorIndex}
-                    <button class="badge text-white badge-error text-sm"
-                            class:badge-outline={errorIndex !== store.selectedError}
+                {#each store.typeErrors as _, errorIndex}
+                    <button class="btn btn-xs btn-error text-error-content"
+                            class:btn-outline={errorIndex !== store.selectedError}
                             onclick={() => {
                         store.chooseError(errorIndex);
                     }}>
@@ -261,12 +262,12 @@
                     </button>
                 {/each}
                 {#if store.parsingErrors.length !== 0}
-                    <span class="badge text-white badge-error text-sm">
+                    <span class="badge  badge-error text-sm text-error-content">
                         Parsing Error
                     </span>
                 {/if}
                 {#if store.importErrors.length !== 0}
-                    <span class="badge text-white badge-error text-sm">
+                    <span class="badge  badge-error text-sm text-error-content">
                         Import Error
                     </span>
                 {/if}
@@ -281,7 +282,7 @@
             </div>
         </article>
     </section>
-    <footer class="w-full flex flex-col justify-between border-t border-stone-200 gap-2 p-2">
+    <footer class="w-full flex flex-col justify-between border-t border-base-300 gap-2 pt-4 p-2">
             <Header text="Possible Fixes">
                 <RoadSign></RoadSign>
             </Header>
@@ -291,14 +292,12 @@
                         <ul class="splide__list">
                                 {#each store.getAvailableFixes() as fix, fixId}
                                     <li class="splide__slide">
-                                        <div id={"fix" + fixId} class="min-w-72 bg-base-100 flex flex-col border rounded-md cursor-pointer"
-                                                class:border-stone-200={fixId !== store.selectedFix}
+                                        <div class="min-w-72 bg-base-100 flex flex-col border rounded-md cursor-pointer"
+                                                class:border-base-300={fixId !== store.selectedFix}
                                                 class:border-primary={fixId === store.selectedFix}
-                                                tabindex="0"
-                                                role="button"
                                                 style="width: fit-content"
                                         >
-                                            <span class="w-full flex border-b border-stone-200 gap-2 items-center text-sm px-2 py-1">
+                                            <span class="w-full flex border-b border-base-300 gap-2 items-center text-sm px-2 py-1">
                                                 <span class="">{fixId + 1} / {store.getCurrentError().Fixes.length}</span>
                                                 {#if store.selectedFix === fixId}
                                                     <span class="badge badge-sm badge-primary">Selected</span>
