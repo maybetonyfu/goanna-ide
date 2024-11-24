@@ -45,7 +45,6 @@ z = if True then 1 else '2'
 
 
 examples['List 1'] = `
-applyToAll :: [a] -> (a -> b) -> [b]
 applyToAll [] _ = []
 applyToAll (x:xs) f = f x : applyToAll f xs
 `.trim()

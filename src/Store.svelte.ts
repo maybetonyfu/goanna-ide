@@ -309,10 +309,10 @@ export function getStore() {
                 return "Main.hs contains invalid Haskell syntax."
             }
             if (importErrors.length == 1) {
-                return `Variable <span class="kbd kbd-sm">${importErrors[0].name}</span> is not defined.`
+                return `</div>Variable <span class="badge">${importErrors[0].name}</span> is not defined.`
             }
             if (importErrors.length > 1) {
-                let variables = importErrors.map(ident => "<span class='kbd kbd-sm'>" + ident.name + "</span>").join(", ")
+                let variables = importErrors.map(ident => "<span class='badge'>" + ident.name + "</span>").join(", ")
                 return `Variables ${variables} are not defined.`
             }
             if (typeErrors.length == 1) {

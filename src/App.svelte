@@ -114,7 +114,7 @@
 <main class="h-full flex flex-col">
     <section class="flex-1" style="display:grid;grid-template-columns: 1fr 10px 2fr;">
         <aside class="flex flex-col">
-            <section class="flex flex-col gap-3 py-4 px-2 border-base-300  border-b">
+            <section class="flex flex-col gap-3 pt-1 pb-4 px-2 border-base-300  border-b">
                 <div class="flex items-center gap-3">
                     <a href="https://goanna.typecheck.me">
                         <img src="/goanna.svg" class="w-12 h-12" alt="Goanna Logo" />
@@ -129,7 +129,9 @@
 
                 <div class="card card-compact bg-base-300 text-base-content">
                     <div class=card-body >
-                        {@html store.message}
+                        <div>
+                            {@html store.message}
+                        </div>
                         <div class="card-actions">
                             <button class="btn btn-xs btn-secondary text-secondary-content"  onclick={store.prolog}>Prolog</button>
                             <button class="btn btn-xs btn-primary  text-primary-content" onclick={store.typeCheck}>Type Check</button>
@@ -142,7 +144,7 @@
             </section>
             <section class="flex-1" style="display:grid;grid-template-rows: 1fr 10px 1fr;">
                 <section class="flex-1 flex flex-col">
-                    <div class="pt-4 p-2">
+                    <div class="py-4 px-2">
                         <Header text="Local Types">
                             <Magnify></Magnify>
                         </Header>
@@ -184,7 +186,7 @@
                                             <td class="p-1.5 w-0 font-bold text-base-300 mx-1"> ::</td>
                                             <td class="p-1.5 text-left">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
                                             <td class="p-1.5 w-0">
-                                                <div class="badge badge-secondary hint--bottom-left hint--medium" aria-label="The type of this fragment changes based on which possible fix is chosen.">
+                                                <div class="align-middle badge badge-secondary hint--bottom-left hint--medium" aria-label="The type of this fragment changes based on which possible fix is chosen.">
                                                     <Branch class=""></Branch>
                                                 </div>
                                             </td>
@@ -198,7 +200,7 @@
                 </section>
                 <Gutter direction="horizontal" bind:dom={gutterHorizontal}></Gutter>
                 <section class="flex-1 flex flex-col">
-                    <div class="flex justify-between items-center gap-4 pt-4 p-2">
+                    <div class="flex justify-between items-center gap-4 py-4 px-2">
                         <Header text="Global Types">
                             <Global></Global>
                         </Header>
@@ -233,7 +235,7 @@
                                             <td class="p-1.5">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
                                             <td class="p-1.5 w-0">
                                                 {#if keysWithChangedValues().includes(name)}
-                                                    <div class="badge badge-secondary hint--bottom-left hint--medium" aria-label="The type of this variable changes based on which possible fix is chosen.">
+                                                    <div class="align-middle badge badge-secondary hint--bottom-left hint--medium" aria-label="The type of this variable changes based on which possible fix is chosen.">
                                                         <Branch class=""></Branch>
                                                     </div>
                                                 {/if}
@@ -284,64 +286,66 @@
             </div>
         </article>
     </section>
-    <footer class="w-full flex flex-col justify-between border-t border-base-300 gap-2 pt-4 p-2">
+    <footer class="w-full flex flex-col justify-between border-t border-base-300">
+        <div  class="py-4 px-2">
             <Header text="Possible Fixes">
                 <RoadSign></RoadSign>
             </Header>
+        </div>
 
-            <section class="splide" role="group" aria-label="Fixes">
-                    <div class="splide__track">
-                        <ul class="splide__list">
-                                {#each store.getAvailableFixes() as fix, fixId}
-                                    <li class="splide__slide">
-                                        <div class="min-w-72 bg-base-100 flex flex-col border rounded-md cursor-pointer"
-                                                class:border-base-300={fixId !== store.selectedFix}
-                                                class:border-primary={fixId === store.selectedFix}
-                                                style="width: fit-content"
-                                        >
-                                            <span class="w-full flex border-b border-base-300 gap-2 items-center text-sm px-2 py-1">
-                                                <span class="">{fixId + 1} / {store.getCurrentError().Fixes.length}</span>
-                                                {#if store.selectedFix === fixId}
-                                                    <span class="badge badge-sm badge-primary">Selected</span>
-                                                {/if}
-                                            </span>
+        <section class="splide px-2" role="group" aria-label="Fixes">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                            {#each store.getAvailableFixes() as fix, fixId}
+                                <li class="splide__slide">
+                                    <div class="min-w-72 bg-base-100 flex flex-col border rounded-md cursor-pointer"
+                                            class:border-base-300={fixId !== store.selectedFix}
+                                            class:border-primary={fixId === store.selectedFix}
+                                            style="width: fit-content"
+                                    >
+                                        <span class="w-full flex border-b border-base-300 gap-2 items-center text-sm px-2 py-1">
+                                            <span class="">{fixId + 1} / {store.getCurrentError().Fixes.length}</span>
+                                            {#if store.selectedFix === fixId}
+                                                <span class="badge badge-sm badge-primary">Selected</span>
+                                            {/if}
+                                        </span>
 
-                                            <Fix lines={fix.Snapshot}></Fix>
-                                        </div>
-                                    </li>
-                                {/each}
-                            </ul>
-                        </div>
-                </section>
-                <section class="w-full flex gap-2 justify-center">
-                    <button class="btn btn-sm" onclick={() => {
-                         slider.go("'-1'")
-                         store.chooseFix(slider.index)
-                    }}>
-                        <Left></Left>
+                                        <Fix lines={fix.Snapshot}></Fix>
+                                    </div>
+                                </li>
+                            {/each}
+                        </ul>
+                    </div>
+            </section>
+            <section class="w-full flex gap-2 justify-center py-4">
+                <button class="btn btn-sm" onclick={() => {
+                     slider.go("'-1'")
+                     store.chooseFix(slider.index)
+                }}>
+                    <Left></Left>
+                </button>
+
+                {#each store.getAvailableFixes() as fix, fixId}
+                    <button
+                            class="btn btn-sm"
+                            class:btn-primary={fixId === store.selectedFix}
+                            onclick={() => {
+                                slider.go(fixId)
+                                store.chooseFix(slider.index)
+                            }}
+                    >
+                        {fixId + 1}
                     </button>
+                {/each}
 
-                    {#each store.getAvailableFixes() as fix, fixId}
-                        <button
-                                class="btn btn-sm"
-                                class:btn-primary={fixId === store.selectedFix}
-                                onclick={() => {
-                                    slider.go(fixId)
-                                    store.chooseFix(slider.index)
-                                }}
-                        >
-                            {fixId + 1}
-                        </button>
-                    {/each}
+                <button class="btn btn-sm" onclick={() => {
+                    slider.go("'+1'")
+                    store.chooseFix(slider.index)
 
-                    <button class="btn btn-sm" onclick={() => {
-                        slider.go("'+1'")
-                        store.chooseFix(slider.index)
-
-                    }}>
-                        <Right></Right>
-                    </button>
-                </section>
+                }}>
+                    <Right></Right>
+                </button>
+            </section>
 
 
     </footer>
