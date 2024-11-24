@@ -81,4 +81,97 @@ sumDistances :: Int
 sumDistances = distances [1 ,3] [2, 4]`
 
 
+
+examples['Let polymorphism'] = `
+x = let y a = a in (y 1, y '2')`.trim()
+
+
+examples['JSON pretty printer'] = `
+data JValue = JString String
+  | JNumber Float 
+  | JBool Bool
+  | JNull 
+  | JObject [(String, JValue)]
+  | JArray  [JValue]
+
+getString :: JValue -> Maybe String 
+getString (JString s) = Just s
+getString _           = Nothing
+
+getBool :: JValue -> Maybe Bool 
+getBool (JBool b) = Just b 
+getBool _         = Nothing 
+
+getNumber :: JValue -> Maybe Float
+getNumber (JNumber n) = Just n
+getNumber _           = Nothing
+
+getObject :: JValue -> Maybe [(String, JValue)]
+getObject js = case js of
+   JObject xs -> Just xs
+   _          -> Nothing 
+
+
+getArray :: JValue -> Maybe [JValue]
+getArray js = case js of
+  JArray xs -> Just xs
+  _         -> Nothing 
+
+isNull :: JValue -> Bool 
+isNull JNull = True
+isNull _     = False 
+
+renderJValue :: JValue -> String
+renderJValue (JString s)   = show s
+renderJValue (JNumber n)   = show n
+renderJValue (JBool True)  = "true"
+renderJValue (JBool False) = "false"
+renderJValue JNull         = "null"
+
+renderJValue (JObject o) = "{" ++ renderPairs o ++ "}"
+renderJValue (JArray a) = "[" ++ renderPairs a ++ "]"
+
+renderPair :: (String, JValue) -> String
+renderPair (k,v)   = show k ++ ": " ++ renderJValue v
+
+renderPairs [] = ""
+renderPairs [p] = renderPair p
+renderPairs (p:ps) = renderPair p ++ "," ++ renderPairs ps
+
+
+renderArrayValues [] = ""
+renderArrayValues [v] = renderJValue v
+renderArrayValues (v:vs) = renderJValue v ++ "," ++ renderArrayValues vs`.trim()
+
+examples['Expression Interpreter'] = `
+data Expr = C Int |
+            Comb Expr Expr| 
+            V String |
+            Let String Expr Expr
+
+
+eval :: Expr -> [(String, Int)] -> ([(String, Int)], Int)
+eval (C x)  env       = (env, x)
+eval (Comb e1 e2) env   =  let env1 = fst (eval e1 env)
+                               v1 = snd (eval e1 env)
+                               env2 = fst (eval e2 env1)
+                               v2 = snd (eval e2 env1)
+                            in (env2, v1 + v2)
+
+-- eval (V v)  env       = (env, find v env)
+eval (Let v e1 e2) env = let env1 = fst (eval e1 env)
+                             v1 = snd (eval e1 env)
+                             env2       = extend v v1  
+                             ans = eval e2 env2
+                         in  ans
+
+---Find a variable's value by looking in the environment
+-- find v  []          = undefined
+-- find v1 ((v2,e):es) = if v1 == v2 then e else find v1 es
+                     
+extend :: String -> Int -> [(String, Int)] -> [(String, Int)]
+extend v e env  = (v,e):env
+
+answer :: Expr -> ([(String, Int)], Int)
+answer e = eval e []`.trim()
 export default examples
