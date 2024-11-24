@@ -116,7 +116,9 @@
         <aside class="flex flex-col">
             <section class="flex flex-col gap-3 py-4 px-2 border-base-300  border-b">
                 <div class="flex items-center gap-3">
-                    <img src="/goanna.svg" class="w-12 h-12" alt="Goanna Logo"/>
+                    <a href="https://goanna.typecheck.me">
+                        <img src="/goanna.svg" class="w-12 h-12" alt="Goanna Logo" />
+                    </a>
                     <select class="select select-primary select-sm w-full" bind:value={store.selectedExample}>
                         <option disabled selected value="default">Choose an example</option>
                         {#each Object.keys(examples) as key}
