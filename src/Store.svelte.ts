@@ -91,6 +91,10 @@ let text = $state<string>(defaultText)
 let typeErrors = $state<TypeError[]>([])
 let parsingErrors = $state<Range[]>([])
 let importErrors = $state<Identifier[]>([])
+let runStatus = $state<boolean>(false)
+let runError = $state<string | null>(null)
+let runOutput = $state<string | null>(null)
+let running =  $state<boolean>(false)
 let nodeRange = $state<NodeRange>({})
 let selectedError = $state<number | null>(null)
 let selectedFixByError = $state<ErrorFixTable>({})
@@ -133,6 +137,43 @@ export function getStore() {
         },
         set importErrors(iErrors: Identifier[]) {
             importErrors = iErrors
+        },
+        get runError(): string|null {
+          return runError
+        },
+        set runError(e) {
+          runError = e
+        },
+        get runStatus(): boolean {
+            return runStatus
+        },
+        set runStatus(s) {
+            runStatus = s
+        },
+        get runOutput () :string|null {
+            return runOutput
+        },
+        set runOutput (output) {
+          runOutput = output
+        },
+        resertRunResult() {
+            runError = null
+            runOutput = null
+            runStatus = false
+        },
+        get running ():boolean {
+          return running
+        },
+        set running(r) {
+          running = r
+        },
+        get canRun() {
+            return (
+                typeErrors.length === 0 &&
+                parsingErrors.length === 0 &&
+                importErrors.length === 0 &&
+                topLevels.includes('m0_main')) &&
+                this.globalTypes.find(([a,_]:[string, string]):boolean => a === "m0_main")[1] === "IO ()"
         },
         set declarations(ds : string[]) {
             declarations = ds
@@ -219,9 +260,6 @@ export function getStore() {
         },
         chooseFix(newSelectedFix: number) {
             selectedFixByError[selectedError] = newSelectedFix
-        },
-        hasErrorAndFix(): boolean {
-            return selectedError !== null && selectedFix !== null && selectedFix !== undefined
         },
         resetErrorFix() {
             selectedError = null
@@ -321,6 +359,12 @@ export function getStore() {
             if (typeErrors.length > 1) {
                 return `Main.hs contains ${typeErrors.length} type errors.`
             }
+            if (runOutput !== null) {
+                return `Output: ${runOutput}`
+            }
+            if (runError !== null) {
+                return `Output: ${runError}`
+            }
             return "Main.hs is well-typed."
         },
         get selectedExample(): string | null {
@@ -333,6 +377,7 @@ export function getStore() {
             return loading
         },
         typeCheck: async function () {
+            this.resertRunResult()
             loading = true
             let buffer = $state.snapshot(text)
             if (buffer.length === 0) {
@@ -377,6 +422,29 @@ export function getStore() {
 
             let prolog = await request.text()
             console.log(prolog)
+        },
+        run: async function() {
+            running = true
+            let buffer = $state.snapshot(text)
+            if (buffer.length === 0) {
+                buffer = "\n"
+            }
+            let request = await fetch("https://runhaskell.fly.dev", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/plain"
+                },
+                body: buffer
+            })
+            running = false
+            let response: {success: boolean, output: string|null, error: string|null} = await request.json()
+            if (response.success) {
+                runStatus = true
+                runOutput = response.output
+            } else {
+                runStatus = false
+                runError = response.error
+            }
         }
     }
 }

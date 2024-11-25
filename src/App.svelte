@@ -7,7 +7,6 @@
     import RoadSign from "./icons/RoadSign.svelte";
     import Header from "./components/Header.svelte";
     import {decode} from "./lib/decodeNames";
-    import Construction from "./icons/Construction.svelte";
     import {onDestroy, onMount} from "svelte";
     import Haskell from "./icons/Haskell.svelte";
     import CheckMark from "./icons/CheckMark.svelte";
@@ -18,6 +17,8 @@
     import Right from "./icons/Right.svelte";
     import examples from "./lib/examples";
     import Branch from "./icons/Branch.svelte";
+    import Output from "../Output.svelte";
+    import Play from "./icons/Play.svelte";
 
     let store = getStore()
     let interval = $state(null)
@@ -133,11 +134,18 @@
                             {@html store.message}
                         </div>
                         <div class="card-actions">
-                            <button class="btn btn-xs btn-secondary text-secondary-content"  onclick={store.prolog}>Prolog</button>
-                            <button class="btn btn-xs btn-primary  text-primary-content" onclick={store.typeCheck}>Type Check</button>
+                            <button class="btn btn-xs btn-success" onclick={store.run} disabled={!store.canRun}>
+                                {#if store.running}
+                                <span class="loading loading-spinner loading-xs"></span>
+                                {:else}
+                                <Play class="text-base"></Play>
+                                {/if}
+                                Run
+                            </button>
+                            <button class="btn btn-xs btn-secondary"  onclick={store.prolog}>Prolog</button>
+                            <button class="btn btn-xs btn-primary" onclick={store.typeCheck}>Type Check</button>
                         </div>
                     </div>
-
                 </div>
 
 
@@ -286,14 +294,13 @@
             </div>
         </article>
     </section>
-    <footer class="w-full flex flex-col justify-between border-t border-base-300">
-        <div  class="py-4 px-2">
+    <footer class="w-full flex flex-col justify-between border-t border-base-300" class:hidden={store.typeErrors.length === 0}>
+        <div class="py-4 px-2">
             <Header text="Possible Fixes">
                 <RoadSign></RoadSign>
             </Header>
         </div>
-
-        <section class="splide px-2" role="group" aria-label="Fixes">
+        <section class="splide px-2">
                 <div class="splide__track">
                     <ul class="splide__list">
                             {#each store.getAvailableFixes() as fix, fixId}
@@ -317,37 +324,35 @@
                         </ul>
                     </div>
             </section>
-            <section class="w-full flex gap-2 justify-center py-4">
-                <button class="btn btn-sm" onclick={() => {
-                     slider.go("'-1'")
-                     store.chooseFix(slider.index)
-                }}>
-                    <Left></Left>
+        <section class="w-full flex gap-2 justify-center py-4">
+            <button class="btn btn-sm" onclick={() => {
+                 slider.go("'-1'")
+                 store.chooseFix(slider.index)
+            }}>
+                <Left></Left>
+            </button>
+
+            {#each store.getAvailableFixes() as fix, fixId}
+                <button
+                        class="btn btn-sm"
+                        class:btn-primary={fixId === store.selectedFix}
+                        onclick={() => {
+                            slider.go(fixId)
+                            store.chooseFix(slider.index)
+                        }}
+                >
+                    {fixId + 1}
                 </button>
+            {/each}
 
-                {#each store.getAvailableFixes() as fix, fixId}
-                    <button
-                            class="btn btn-sm"
-                            class:btn-primary={fixId === store.selectedFix}
-                            onclick={() => {
-                                slider.go(fixId)
-                                store.chooseFix(slider.index)
-                            }}
-                    >
-                        {fixId + 1}
-                    </button>
-                {/each}
+            <button class="btn btn-sm" onclick={() => {
+                slider.go("'+1'")
+                store.chooseFix(slider.index)
 
-                <button class="btn btn-sm" onclick={() => {
-                    slider.go("'+1'")
-                    store.chooseFix(slider.index)
-
-                }}>
-                    <Right></Right>
-                </button>
-            </section>
-
-
+            }}>
+                <Right></Right>
+            </button>
+        </section>
     </footer>
 
 
