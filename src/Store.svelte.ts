@@ -1,7 +1,7 @@
 import retry from './lib/retry';
 import examples from "./lib/examples";
 
-let defaultText: string = "-- choose an example from the dropdown on the left, or write some Haskell code here"
+let defaultText: string = "x = 1"
 let backendUrl = import.meta.env.DEV ? "http://localhost:8080" : "https://goanna-api.fly.dev"
 let defaultExample = new URLSearchParams(window.location.search).get('example');
 
@@ -156,7 +156,7 @@ export function getStore() {
         set runOutput (output) {
           runOutput = output
         },
-        resertRunResult() {
+        resetRunResult() {
             runError = null
             runOutput = null
             runStatus = false
@@ -169,6 +169,7 @@ export function getStore() {
         },
         get canRun() {
             return (
+                !running &&
                 typeErrors.length === 0 &&
                 parsingErrors.length === 0 &&
                 importErrors.length === 0 &&
@@ -377,7 +378,10 @@ export function getStore() {
             return loading
         },
         typeCheck: async function () {
-            this.resertRunResult()
+            if (loading) {
+                return
+            }
+            this.resetRunResult()
             loading = true
             let buffer = $state.snapshot(text)
             if (buffer.length === 0) {
@@ -424,6 +428,9 @@ export function getStore() {
             console.log(prolog)
         },
         run: async function() {
+            if (running) {
+                return
+            }
             running = true
             let buffer = $state.snapshot(text)
             if (buffer.length === 0) {

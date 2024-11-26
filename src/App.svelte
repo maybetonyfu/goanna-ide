@@ -134,7 +134,7 @@
                             {@html store.message}
                         </div>
                         <div class="card-actions">
-                            <button class="btn btn-xs btn-success" onclick={store.run} disabled={!store.canRun}>
+                            <button class="btn btn-xs btn-success" onclick={() => store.run()} disabled={!store.canRun}>
                                 {#if store.running}
                                 <span class="loading loading-spinner loading-xs"></span>
                                 {:else}
@@ -142,8 +142,8 @@
                                 {/if}
                                 Run
                             </button>
-                            <button class="btn btn-xs btn-secondary"  onclick={store.prolog}>Prolog</button>
-                            <button class="btn btn-xs btn-primary" onclick={store.typeCheck}>Type Check</button>
+                            <button class="btn btn-xs btn-secondary"  onclick={() => store.prolog()}>Prolog</button>
+                            <button class="btn btn-xs btn-primary" onclick={() => store.typeCheck()}>Type Check</button>
                         </div>
                     </div>
                 </div>
