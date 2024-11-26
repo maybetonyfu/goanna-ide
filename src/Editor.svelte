@@ -100,6 +100,7 @@
         background-color: oklch(var(--b2));
         color: oklch(var(--bc));
     }
+
     :global(.cm-editor.cm-focused) {
         outline: none;
     }

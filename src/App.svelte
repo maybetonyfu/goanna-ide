@@ -284,7 +284,7 @@
                     </span>
                 {/if}
                 {#if store.typeErrors.length === 0 && store.parsingErrors.length === 0 && store.importErrors.length === 0}
-                    <span class="badge badge-sm text-white badge-success text-lg">
+                    <span class="badge badge-sm badge-success text-lg">
                         <CheckMark></CheckMark>
                     </span>
                 {/if}
