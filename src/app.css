@@ -13,27 +13,20 @@ html, body, #app{
 }
 
 .mark-0 {
-  background-color: #b5fab0;
+  background-color: #b3e2cd;
 }
 
-.mark-1 { background-color: #e9c9fb;
+.mark-1 { background-color: #fdcdac;
 }
-.mark-2 { background-color: #c8f5ff }
-.mark-3 { background-color: #9df6d1
+.mark-2 { background-color: #cbd5e8 }
+.mark-3 { background-color: #f4cae4
 }
-.mark-4 { background-color: #efc48c
+.mark-4 { background-color: #e6f5c9
 }
-.mark-5 { background-color: #FF9E9E }
-.mark-6 { background-color: #38C6BD }
-.mark-7 { background-color: #97FFCF }
-.mark-8 { background-color: #81F5FF }
-.mark-9 { background-color: #FCFFB2 }
-.mark-10 { background-color: #B6EAFA }
-.mark-11 { background-color: #C0EEE4 }
-.mark-12 { background-color: #F8F988 }
-.mark-13 { background-color: #FFCAC8 }
-.mark-14 { background-color: #FFFB97 }
-.mark-15 { background-color: #2FE1D6 }
+.mark-5 { background-color: #fff2ae }
+.mark-6 { background-color: #f1e2cc }
+.mark-7 { background-color: #cccccc }
+
 
 .mark-active-node {
   text-decoration-line: line-through;

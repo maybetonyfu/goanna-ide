@@ -111,7 +111,7 @@ let selectedFix = $derived(selectedFixByError[selectedError])
 function assignColors(errors) {
     errors.forEach((error, i) => {
         Object.keys(error.CriticalNodes).forEach((key, j) => {
-            errors[i].CriticalNodes[key].Class = "mark mark-" + j.toString()
+            errors[i].CriticalNodes[key].Class = "mark mark-" + (j % 8).toString()
         })
     })
 }
