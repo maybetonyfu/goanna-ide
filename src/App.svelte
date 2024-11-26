@@ -170,7 +170,8 @@
                                     <tr class=" border border-base-300">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
-                                        </td>                                    </tr>
+                                        </td>
+                                    </tr>
                                     <tr class=" border borderbase-300">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
@@ -178,7 +179,7 @@
                                     </tr>
                                 {:else}
                                     {#each store.localTypes as [name, type]}
-                                        <tr class={"border border-base-300"}
+                                        <tr class={"border border-base-300 hover:bg-base-200"}
                                             class:opacity-30={!store.shouldSpotlight(name)}
                                             onmouseenter={() => {
                                                 store.setSpotlightNode(name)
@@ -187,30 +188,26 @@
                                                 if (globalName) {
                                                     let elem = document.getElementById(globalName[0])
                                                     elem.scrollIntoView()
-                                                    elem.classList.add('bg-base-300')
+                                                    elem.classList.add('bg-base-200')
                                                 }
                                             }}
                                             onmouseleave={() => {
                                                 store.setSpotlightNode(null)
                                                 Array.from(document.getElementById('globalTypes').children).forEach(elem => {
-                                                    elem.classList.remove('bg-base-300')
+                                                    elem.classList.remove('bg-base-200')
 
                                                 })
-
-
                                             }}>
                                             <td class="p-1.5 w-0">
-                                    <span class={store.getCurrentError().CriticalNodes[name].Class
-                                     + (store.getCurrentFix().MCS.includes(+name) ? " mark-active-node": "")
-                                    }>
-                                        {store.getCurrentError().CriticalNodes[name].DisplayName}
-                                    </span>
+                                        <pre class={store.getCurrentError().CriticalNodes[name].Class + " px-0.5 w-fit"}
+                                             class:mark-active-node = {store.getCurrentFix().MCS.includes(+name)}
+                                     >{store.getCurrentError().CriticalNodes[name].DisplayName}</pre>
                                             </td>
                                             <td class="p-1.5 w-0 font-bold text-base-300 mx-1"> ::</td>
                                             <td class="p-1.5 text-left">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
                                             <td class="p-1.5 w-0">
-                                                <div class="align-middle badge badge-secondary hint--bottom-left hint--medium" aria-label="The type of this fragment changes based on which possible fix is chosen.">
-                                                    <Branch class=""></Branch>
+                                                <div class="align-middle badge badge-ghost hint--bottom-left hint--medium" aria-label="The type of this fragment changes based on which possible fix is chosen.">
+                                                    <Branch></Branch>
                                                 </div>
                                             </td>
                                         </tr>
@@ -258,7 +255,7 @@
                                             <td class="p-1.5">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
                                             <td class="p-1.5 w-0">
                                                 {#if keysWithChangedValues().includes(name)}
-                                                    <div class="align-middle badge badge-secondary hint--bottom-left hint--medium" aria-label="The type of this variable changes based on which possible fix is chosen.">
+                                                    <div class="align-middle badge badge-ghost hint--bottom-left hint--medium" aria-label="The type of this variable changes based on which possible fix is chosen.">
                                                         <Branch class=""></Branch>
                                                     </div>
                                                 {/if}
@@ -279,6 +276,10 @@
             <span class="px-2 py-1 flex items-center gap-2">
                 <Haskell class="text-primary"></Haskell>
                 <span class="mr-1">Main.hs</span>
+                {#if store.loading || store.running}
+                    <span class="loading loading-spinner loading-xs"></span>
+                {/if}
+                {#if store.typeErrors.length !== 0 && ! store.loading}
                 {#each store.typeErrors as _, errorIndex}
                     <button class="btn btn-xs btn-error text-error-content"
                             class:btn-outline={errorIndex !== store.selectedError}
@@ -288,6 +289,7 @@
                         Type Error {errorIndex + 1}
                     </button>
                 {/each}
+                {/if}
                 {#if store.parsingErrors.length !== 0}
                     <span class="badge  badge-error text-sm text-error-content">
                         Parsing Error
@@ -309,7 +311,7 @@
             </div>
         </article>
     </section>
-    <footer class="w-full flex flex-col justify-between border-t border-base-300" class:hidden={store.typeErrors.length === 0}>
+    <footer class="w-full flex flex-col justify-between border-t border-base-300" class:hidden={store.typeErrors.length === 0 || store.loading}>
         <div class="py-4 px-2">
             <Header text="Possible Fixes">
                 <RoadSign></RoadSign>
@@ -320,7 +322,7 @@
                     <ul class="splide__list">
                             {#each store.getAvailableFixes() as fix, fixId}
                                 <li class="splide__slide">
-                                    <div class="min-w-72 bg-base-100 flex flex-col border rounded-md cursor-pointer"
+                                    <div class="min-w-72 bg-base-100 flex flex-col border rounded-sm cursor-pointer"
                                             class:border-base-300={fixId !== store.selectedFix}
                                             class:border-primary={fixId === store.selectedFix}
                                             style="width: fit-content"

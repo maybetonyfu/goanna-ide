@@ -30,8 +30,8 @@ html, body, #app{
 
 .mark-active-node {
   text-decoration-line: line-through;
-  text-decoration-color: rgba(239, 5, 5, 0.5);
-  text-decoration-thickness: 4px;
+  text-decoration-color: rgba(198, 3, 3, 0.9);
+  text-decoration-thickness: 3px;
 }
 
 .mark-spotlight {

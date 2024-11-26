@@ -1,7 +1,12 @@
 import retry from './lib/retry';
 import examples from "./lib/examples";
 
-let defaultText: string = "x = 1"
+let defaultText: string = `
+message = "hello" + " world"
+
+main = print message
+`.trim()
+
 let backendUrl = import.meta.env.DEV ? "http://localhost:8080" : "https://goanna-api.fly.dev"
 let defaultExample = new URLSearchParams(window.location.search).get('example');
 

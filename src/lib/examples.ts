@@ -78,12 +78,15 @@ distance x y = (x + y) * (x - y)
 distances xs ys = zipWith distance xs ys
 
 sumDistances :: Int
-sumDistances = distances [1 ,3] [2, 4]`
+sumDistances = distances [1 ,3] [2, 4]`.trim()
 
 
 
 examples['Let polymorphism'] = `
-x = let y a = a in (y 1, y '2')`.trim()
+x = let y a = a in (y 1, y '2')
+
+main = print x
+`.trim()
 
 
 examples['JSON pretty printer'] = `
