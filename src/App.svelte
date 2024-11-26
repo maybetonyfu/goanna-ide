@@ -17,7 +17,6 @@
     import Right from "./icons/Right.svelte";
     import examples from "./lib/examples";
     import Branch from "./icons/Branch.svelte";
-    import Output from "../Output.svelte";
     import Play from "./icons/Play.svelte";
 
     let store = getStore()
@@ -178,12 +177,28 @@
                                         </td>
                                     </tr>
                                 {:else}
-
                                     {#each store.localTypes as [name, type]}
                                         <tr class={"border border-base-300"}
                                             class:opacity-30={!store.shouldSpotlight(name)}
-                                            onmouseenter={() => { store.setSpotlightNode(name) }}
-                                            onmouseleave={() => { store.setSpotlightNode(null) }}>
+                                            onmouseenter={() => {
+                                                store.setSpotlightNode(name)
+                                                let nameString = store.getCurrentError().CriticalNodes[name].DisplayName
+                                                let globalName = store.globalTypes.find(([n,_]) => decode(n)[1] === nameString)
+                                                if (globalName) {
+                                                    let elem = document.getElementById(globalName[0])
+                                                    elem.scrollIntoView()
+                                                    elem.classList.add('bg-base-300')
+                                                }
+                                            }}
+                                            onmouseleave={() => {
+                                                store.setSpotlightNode(null)
+                                                Array.from(document.getElementById('globalTypes').children).forEach(elem => {
+                                                    elem.classList.remove('bg-base-300')
+
+                                                })
+
+
+                                            }}>
                                             <td class="p-1.5 w-0">
                                     <span class={store.getCurrentError().CriticalNodes[name].Class
                                      + (store.getCurrentFix().MCS.includes(+name) ? " mark-active-node": "")
@@ -216,7 +231,7 @@
                     <div class="relative overflow-scroll h-full">
                         <div class="absolute w-full px-2 pb-2">
                             <table class="table bg-base-100 font-mono">
-                                <tbody>
+                                <tbody id="globalTypes">
                                 {#if store.loading}
                                     <tr class=" border border-base-300">
                                         <td class="p-1.5 w-0">
@@ -235,7 +250,7 @@
                                 {:else}
 
                                     {#each store.globalTypes as [name, type]}
-                                        <tr class=" border border-base-300">
+                                        <tr class=" border border-base-300" id={name}>
                                             <td class="p-1.5 w-0">
                                                 <div>{decode(name)[1]}</div>
                                             </td>
