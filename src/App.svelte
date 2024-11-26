@@ -181,7 +181,7 @@
 
                                     {#each store.localTypes as [name, type]}
                                         <tr class={"border border-base-300"}
-                                            class:text-base-300={!store.shouldSpotlight(name)}
+                                            class:opacity-30={!store.shouldSpotlight(name)}
                                             onmouseenter={() => { store.setSpotlightNode(name) }}
                                             onmouseleave={() => { store.setSpotlightNode(null) }}>
                                             <td class="p-1.5 w-0">
