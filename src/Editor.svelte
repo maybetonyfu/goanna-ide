@@ -34,6 +34,19 @@
     })
 
     $effect(() => {
+        if (store.typeErrors.length > 0) {
+            if (!editorView) return
+            let fix = store.getCurrentFix()
+            let mcs = fix.MCS
+            if (mcs.length === 0) return
+            let nodeRange = store.nodeRange
+            let pos = mcs.map((n) => nodeRange[n]).map(l => getPosition(l.from_line, l.from_col)).toSorted()[0]
+            let effect = EditorView.scrollIntoView(pos)
+            editorView.dispatch({effects: [effect]})
+        }
+    })
+
+    $effect(() => {
         let lighlights = $state.snapshot(store.highlights)
         if (editorView === null || editorView === undefined) return
         dispatchHighlights(editorView,lighlights.map(hl => {

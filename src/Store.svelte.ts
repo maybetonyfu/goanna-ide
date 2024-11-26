@@ -222,7 +222,9 @@ export function getStore() {
             assignColors(tErrors)
             typeErrors = tErrors
         },
-
+        get nodeRange() {
+          return nodeRange
+        },
         set nodeRange(newNodeRange: NodeRange) {
             nodeRange = newNodeRange
         },
