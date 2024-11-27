@@ -273,7 +273,7 @@
         </aside>
         <Gutter bind:dom={gutterVertical} direction="vertical"></Gutter>
         <article class="flex flex-col">
-            <span class="px-2 py-1 flex items-center gap-2 bg-base-300">
+            <span class="px-2 py-1 flex items-center gap-2 border-b border-base-300">
                 <Haskell class="text-primary"></Haskell>
                 <span class="mr-1">Main.hs</span>
                 {#if store.loading || store.running}
@@ -327,7 +327,7 @@
                                             class:border-primary={fixId === store.selectedFix}
                                             style="width: fit-content"
                                     >
-                                        <span class="w-full flex border-b border-base-300 gap-2 items-center text-sm px-2 py-1">
+                                        <span class="w-full flex gap-2 items-center text-sm px-2 py-1">
                                             <span class="">{fixId + 1} / {store.getCurrentError().Fixes.length}</span>
                                             {#if store.selectedFix === fixId}
                                                 <span class="badge badge-sm badge-primary">Selected</span>
