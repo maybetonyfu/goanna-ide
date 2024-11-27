@@ -6,10 +6,12 @@ x = 1.0
 
 
 examples['Abstract data types'] =`
-data V = X Int | Y Char
+data V = X Int | Y Char deriving Show
 
 y :: V
 y = X '3'
+
+main = print y
 `.trim()
 
 examples["Type variables"] = `
