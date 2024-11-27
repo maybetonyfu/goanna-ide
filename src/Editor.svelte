@@ -100,7 +100,7 @@
 <style>
     :global(.cm-editor) {
         height: 100%;
-        background-color: oklch(var(--b2));
+        background-color: oklch(var(--b1));
         color: oklch(var(--bc));
     }
 
@@ -114,9 +114,8 @@
 
     }
     :global(.cm-editor .cm-gutters) {
-        background-color: oklch(var(--b1));
+        background-color: oklch(var(--b2));
         border: none;
-        opacity: 0.5;
         color: oklch(var(--bc));
     }
 

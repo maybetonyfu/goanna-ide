@@ -10,22 +10,17 @@ html, body, #app{
 
 .mark {
   border-radius: 3px;
+  /*color: white;*/
 }
 
-.mark-0 {
-  background-color: #b3e2cd;
-}
-
-.mark-1 { background-color: #fdcdac;
-}
-.mark-2 { background-color: #cbd5e8 }
-.mark-3 { background-color: #f4cae4
-}
-.mark-4 { background-color: #e6f5c9
-}
-.mark-5 { background-color: #fff2ae }
-.mark-6 { background-color: #f1e2cc }
-.mark-7 { background-color: #cccccc }
+.mark-0 { background-color: #b3e2cd; }
+.mark-1 { background-color: #fdcdac;}
+.mark-2 { background-color: #cbd5e8; }
+.mark-3 { background-color: #f4cae4;}
+.mark-4 { background-color: #e6f5c9;}
+.mark-5 { background-color: #fff2ae; }
+.mark-6 { background-color: #f1e2cc; }
+.mark-7 { background-color: #cccccc; }
 
 
 .mark-active-node {

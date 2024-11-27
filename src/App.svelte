@@ -273,7 +273,7 @@
         </aside>
         <Gutter bind:dom={gutterVertical} direction="vertical"></Gutter>
         <article class="flex flex-col">
-            <span class="px-2 py-1 flex items-center gap-2">
+            <span class="px-2 py-1 flex items-center gap-2 bg-base-300">
                 <Haskell class="text-primary"></Haskell>
                 <span class="mr-1">Main.hs</span>
                 {#if store.loading || store.running}
