@@ -1,6 +1,6 @@
 <script>
     import {onMount, untrack} from "svelte";
-    import {EditorState} from "@codemirror/state"
+    import {EditorSelection, EditorState, SelectionRange} from "@codemirror/state"
     import {EditorView, lineNumbers, keymap} from "@codemirror/view"
     import {defaultKeymap} from "@codemirror/commands"
     import {highlightField, dispatchHighlights, clearHighlights} from "./lib/highlight";
@@ -40,8 +40,11 @@
             let mcs = fix.MCS
             if (mcs.length === 0) return
             let nodeRange = store.nodeRange
-            let pos = mcs.map((n) => nodeRange[n]).map(l => getPosition(l.from_line, l.from_col)).toSorted()[0]
-            let effect = EditorView.scrollIntoView(pos)
+            let pos = mcs.map((n) => nodeRange[n]).map(l => getPosition(l.from_line, l.from_col))
+            let from = Math.min(...pos)
+            let to = Math.max(...pos)
+            let selectionRange = EditorSelection.range(from, to)
+            let effect = EditorView.scrollIntoView(selectionRange)
             editorView.dispatch({effects: [effect]})
         }
     })

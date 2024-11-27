@@ -300,7 +300,7 @@
                         Import Error
                     </span>
                 {/if}
-                {#if store.typeErrors.length === 0 && store.parsingErrors.length === 0 && store.importErrors.length === 0}
+                {#if store.typeErrors.length === 0 && store.parsingErrors.length === 0 && store.importErrors.length === 0 && !store.running && !store.loading}
                     <span class="badge badge-sm badge-success text-lg">
                         <CheckMark></CheckMark>
                     </span>

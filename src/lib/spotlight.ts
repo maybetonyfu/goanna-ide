@@ -52,6 +52,6 @@ export const clearSpotlights = (view: EditorView) => {
 export const dispatchSpotlights = (view: EditorView, spotlight: Spotlight) => {
     if (!view) return;
     let effects: StateEffect<Spotlight>[] = [spotlightEffect.of(spotlight)]
-    view.dispatch({effects})
+    view.dispatch({effects, scrollIntoView: true, selection: {anchor: spotlight.from}})
 }
 
