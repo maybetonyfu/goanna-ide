@@ -119,7 +119,7 @@
                     <a href="https://goanna.typecheck.me">
                         <img src="/goanna.svg" class="w-12 h-12" alt="Goanna Logo" />
                     </a>
-                    <select class="select select-primary select-sm w-full" bind:value={store.selectedExample}>
+                    <select class="select select-primary select-sm w-full" onchange={_ => store.setSpotlightNode(null)} bind:value={store.selectedExample}>
                         <option disabled selected value="default">Choose an example</option>
                         {#each Object.keys(examples) as key}
                             <option value={key}>{key}</option>

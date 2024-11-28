@@ -212,7 +212,7 @@ export function getStore() {
             }
 
         },
-        setSpotlightNode(node: string | number) {
+        setSpotlightNode(node: string | number | null) {
             if (typeof node === "string") {
                 node = parseInt(node, 10)
             }
