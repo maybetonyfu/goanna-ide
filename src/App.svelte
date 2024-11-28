@@ -100,8 +100,6 @@
         return changedKeys
     }
 
-
-
     $effect(() => {
         if (store.getAvailableFixes()) {
             slider.refresh()
@@ -141,8 +139,10 @@
                                 {/if}
                                 Run
                             </button>
+                            {#if new URLSearchParams(window.location.search).has("debug")}
                             <button class="btn btn-xs btn-secondary"  onclick={() => store.prolog()}>Prolog</button>
                             <button class="btn btn-xs btn-primary" onclick={() => store.typeCheck()}>Type Check</button>
+                            {/if}
                         </div>
                     </div>
                 </div>
