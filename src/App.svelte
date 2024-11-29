@@ -112,7 +112,7 @@
 <main class="h-full flex flex-col">
     <section class="flex-1" style="display:grid;grid-template-columns: 1fr 10px 2fr;">
         <aside class="flex flex-col">
-            <section class="flex flex-col gap-3 pt-1 pb-4 px-2 border-base-300  border-b-2 bg-base-200">
+            <section class="flex flex-col gap-3 pt-1 pb-4 px-2 border-base-300  border-b bg-base-200">
                 <div class="flex items-center gap-3">
                     <a href="https://goanna.typecheck.me">
                         <img src="/goanna.svg" class="w-12 h-12" alt="Goanna Logo" />
@@ -279,7 +279,7 @@
         </aside>
         <Gutter bind:dom={gutterVertical} direction="vertical"></Gutter>
         <article class="flex flex-col">
-            <span class="px-2 py-1 flex items-center gap-2 border-b-2 border-base-300 bg-base-200">
+            <span class="px-2 py-1 flex items-center gap-2 border-b border-base-300 bg-base-200">
                 <Haskell class="text-primary"></Haskell>
                 <span class="mr-1">Main.hs</span>
                 {#if store.loading || store.running}
@@ -317,7 +317,7 @@
             </div>
         </article>
     </section>
-    <footer class="w-full flex flex-col justify-between border-t-2 border-base-300 bg-base-200" class:hidden={store.typeErrors.length === 0 || store.loading}>
+    <footer class="w-full flex flex-col justify-between border-t border-base-300 bg-base-200" class:hidden={store.typeErrors.length === 0 || store.loading}>
         <div class="py-3 px-2">
             <Header text="Possible Fixes">
                 <RoadSign></RoadSign>
