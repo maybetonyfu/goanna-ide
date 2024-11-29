@@ -33,12 +33,12 @@
 <div class="w-full p-2 bg-base-200">
     {#each shrinkLines(lines) as line, index}
         {#if index !== 0 && index !== line.length - 1 && line.LineNumber - lines[index-1].LineNumber > 1 }
-            <div class="flex justify-center border-y border-base-300  items-center text-stone-500 py-1">
+            <div class="flex justify-center border-t border-b   border-base-300 items-center text-stone-500 py-1">
                 <Fold></Fold>
             </div>
         {/if}
         <div
-            class="flex whitespace-pre items-center font-mono bg-base-100 text-sm border-x border-base-300"
+            class="flex whitespace-pre items-center border-x  border-base-300 font-mono bg-base-100 text-sm "
             class:border-t={index === 0}
             class:border-b={index === lines.length - 1}
         >

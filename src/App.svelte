@@ -112,7 +112,7 @@
 <main class="h-full flex flex-col">
     <section class="flex-1" style="display:grid;grid-template-columns: 1fr 10px 2fr;">
         <aside class="flex flex-col">
-            <section class="flex flex-col gap-3 pt-1 pb-4 px-2 border-base-300  border-b">
+            <section class="flex flex-col gap-3 pt-1 pb-4 px-2 border-base-300  border-b-2 bg-base-200">
                 <div class="flex items-center gap-3">
                     <a href="https://goanna.typecheck.me">
                         <img src="/goanna.svg" class="w-12 h-12" alt="Goanna Logo" />
@@ -125,7 +125,7 @@
                     </select>
                 </div>
 
-                <div class="card card-compact bg-base-300 text-base-content">
+                <div class="card card-compact bg-base-300">
                     <div class=card-body >
                         <div>
                             {@html store.message}
@@ -150,8 +150,8 @@
 
             </section>
             <section class="flex-1" style="display:grid;grid-template-rows: 1fr 10px 1fr;">
-                <section class="flex-1 flex flex-col">
-                    <div class="py-4 px-2">
+                <section class="flex-1 flex flex-col bg-base-200">
+                    <div class="py-3 px-2">
                         <Header text="Local Types">
                             <Magnify></Magnify>
                         </Header>
@@ -159,28 +159,34 @@
 
                     <div class="relative overflow-scroll h-full">
                         <div class="absolute px-2 pb-2 w-full">
-                            <table class="table bg-base-100 font-mono">
+                            <table class="w-full text-sm font-mono">
                                 <tbody>
                                 {#if store.loading}
-                                    <tr class=" border border-base-300">
+                                    <tr class=" bg-base-100">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
                                         </td>
                                     </tr>
-                                    <tr class=" border border-base-300">
+                                    <tr class="h-2 bg-base-200">
+                                        <td></td>
+                                    </tr>
+                                    <tr class=" bg-base-100">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
                                         </td>
                                     </tr>
-                                    <tr class=" border borderbase-300">
+                                    <tr class="h-2 bg-base-200">
+                                        <td></td>
+                                    </tr>
+                                    <tr class=" bg-base-100">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
                                         </td>
                                     </tr>
                                 {:else}
                                     {#each store.localTypes as [name, type]}
-                                        <tr class={"border border-base-300 hover:bg-base-200"}
-                                            class:opacity-30={!store.shouldSpotlight(name)}
+                                        <tr class={"bg-base-100 transition-opacity"}
+                                          class:opacity-60={!store.shouldSpotlight(name)}
                                             onmouseenter={() => {
                                                 store.setSpotlightNode(name)
                                                 let nameString = store.getCurrentError().CriticalNodes[name].DisplayName
@@ -188,13 +194,13 @@
                                                 if (globalName) {
                                                     let elem = document.getElementById(globalName[0])
                                                     elem.scrollIntoView()
-                                                    elem.classList.add('bg-base-200')
+                                                    // elem.classList.add('bg-base-300')
                                                 }
                                             }}
                                             onmouseleave={() => {
                                                 store.setSpotlightNode(null)
                                                 Array.from(document.getElementById('globalTypes').children).forEach(elem => {
-                                                    elem.classList.remove('bg-base-200')
+                                                    // elem.classList.remove('bg-base-300')
 
                                                 })
                                             }}>
@@ -211,6 +217,12 @@
                                                 </div>
                                             </td>
                                         </tr>
+                                        <tr class="h-2 bg-base-200">
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
                                     {/each}
                                 {/if}
                                 </tbody>
@@ -219,27 +231,34 @@
                     </div>
                 </section>
                 <Gutter direction="horizontal" bind:dom={gutterHorizontal}></Gutter>
-                <section class="flex-1 flex flex-col">
-                    <div class="flex justify-between items-center gap-4 py-4 px-2">
+                <section class="flex-1 flex flex-col bg-base-200">
+                    <div class="flex justify-between items-center gap-4 py-3 px-2">
                         <Header text="Global Types">
                             <Global></Global>
                         </Header>
                     </div>
                     <div class="relative overflow-scroll h-full">
                         <div class="absolute w-full px-2 pb-2">
-                            <table class="table bg-base-100 font-mono">
+                            <table class="w-full text-sm bg-base-100 font-mono">
                                 <tbody id="globalTypes">
                                 {#if store.loading}
-                                    <tr class=" border border-base-300">
+                                    <tr class=" bg-base-100">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
                                         </td>
                                     </tr>
-                                    <tr class=" border border-base-300">
+                                    <tr class="h-2 bg-base-200">
+                                        <td></td>
+                                    </tr>
+                                    <tr class=" bg-base-100">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
-                                        </td>                                    </tr>
-                                    <tr class=" border border-base-300">
+                                        </td>
+                                    </tr>
+                                    <tr class="h-2 bg-base-200">
+                                        <td></td>
+                                    </tr>
+                                    <tr class=" bg-base-100">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
                                         </td>
@@ -247,7 +266,8 @@
                                 {:else}
 
                                     {#each store.globalTypes as [name, type]}
-                                        <tr class=" border border-base-300" id={name}>
+
+                                        <tr class="bg-base-100" id={name}>
                                             <td class="p-1.5 w-0">
                                                 <div>{decode(name)[1]}</div>
                                             </td>
@@ -261,6 +281,12 @@
                                                 {/if}
                                             </td>
                                         </tr>
+                                        <tr class="h-2 bg-base-200">
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
                                     {/each}
                                 {/if}
                                 </tbody>
@@ -273,7 +299,7 @@
         </aside>
         <Gutter bind:dom={gutterVertical} direction="vertical"></Gutter>
         <article class="flex flex-col">
-            <span class="px-2 py-1 flex items-center gap-2 border-b border-base-300">
+            <span class="px-2 py-1 flex items-center gap-2 border-b-2 border-base-300 bg-base-200">
                 <Haskell class="text-primary"></Haskell>
                 <span class="mr-1">Main.hs</span>
                 {#if store.loading || store.running}
@@ -311,20 +337,19 @@
             </div>
         </article>
     </section>
-    <footer class="w-full flex flex-col justify-between border-t border-base-300" class:hidden={store.typeErrors.length === 0 || store.loading}>
-        <div class="py-4 px-2">
+    <footer class="w-full flex flex-col justify-between border-t-2 border-base-300 bg-base-200" class:hidden={store.typeErrors.length === 0 || store.loading}>
+        <div class="py-3 px-2">
             <Header text="Possible Fixes">
                 <RoadSign></RoadSign>
             </Header>
         </div>
         <section class="splide px-2">
                 <div class="splide__track">
-                    <ul class="splide__list">
+                    <ul class="splide__list ">
                             {#each store.getAvailableFixes() as fix, fixId}
-                                <li class="splide__slide">
-                                    <div class="min-w-72 bg-base-100 flex flex-col border rounded-sm cursor-pointer"
-                                            class:border-base-300={fixId !== store.selectedFix}
-                                            class:border-primary={fixId === store.selectedFix}
+                                <li class="splide__slide ">
+                                    <div class="min-w-72 flex flex-col bg-base-100 border border-neutral rounded-sm cursor-pointer"
+                                            class:border-opacity-25={fixId !== store.selectedFix}
                                             style="width: fit-content"
                                     >
                                         <span class="w-full flex gap-2 items-center text-sm px-2 py-1">
@@ -342,7 +367,7 @@
                     </div>
             </section>
         <section class="w-full flex gap-2 justify-center py-4">
-            <button class="btn btn-sm" onclick={() => {
+            <button class="btn btn-sm btn-ghost" onclick={() => {
                  slider.go("'-1'")
                  store.chooseFix(slider.index)
             }}>
@@ -351,7 +376,8 @@
 
             {#each store.getAvailableFixes() as fix, fixId}
                 <button
-                        class="btn btn-sm"
+                        class="btn btn-sm "
+                        class:btn-ghost={fixId !== store.selectedFix}
                         class:btn-primary={fixId === store.selectedFix}
                         onclick={() => {
                             slider.go(fixId)
@@ -362,7 +388,7 @@
                 </button>
             {/each}
 
-            <button class="btn btn-sm" onclick={() => {
+            <button class="btn btn-sm btn-ghost" onclick={() => {
                 slider.go("'+1'")
                 store.chooseFix(slider.index)
 
