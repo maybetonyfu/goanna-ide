@@ -30,13 +30,15 @@ html, body, #app{
 }
 
 .mark-spotlight {
-    color: black;
+    color: oklch(var(--bc));
+
 }
 
 .cm-content:has(.mark-spotlight) {
-  color: #b1b1b1;
-  font-weight: 500;
-  opacity: 0.75;
+  color: #a6a5a5;
+  /*transition-property: color;*/
+  /*transition-duration: 200ms;*/
+
 }
 
 .cm-content:has(.mark-spotlight) :not(.mark-spotlight .mark) {

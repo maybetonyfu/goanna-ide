@@ -162,30 +162,26 @@
                             <table class="w-full text-sm font-mono">
                                 <tbody>
                                 {#if store.loading}
-                                    <tr class=" bg-base-100">
+                                    <tr class=" bg-base-100 border-y-4 border-base-200">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
                                         </td>
                                     </tr>
-                                    <tr class="h-2 bg-base-200">
-                                        <td></td>
-                                    </tr>
-                                    <tr class=" bg-base-100">
+
+                                    <tr class=" bg-base-100 border-y-4 border-base-200">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
                                         </td>
                                     </tr>
-                                    <tr class="h-2 bg-base-200">
-                                        <td></td>
-                                    </tr>
-                                    <tr class=" bg-base-100">
+
+                                    <tr class=" bg-base-100 border-y-4 border-base-200">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
                                         </td>
                                     </tr>
                                 {:else}
                                     {#each store.localTypes as [name, type]}
-                                        <tr class={"bg-base-100 transition-opacity"}
+                                        <tr class={"bg-base-100 transition-opacity p-1 border-y-4 border-base-200"}
                                           class:opacity-60={!store.shouldSpotlight(name)}
                                             onmouseenter={() => {
                                                 store.setSpotlightNode(name)
@@ -209,19 +205,13 @@
                                              class:mark-active-node = {store.getCurrentFix().MCS.includes(+name)}
                                      >{store.getCurrentError().CriticalNodes[name].DisplayName}</pre>
                                             </td>
-                                            <td class="p-1.5 w-0 font-bold text-base-300 mx-1"> ::</td>
-                                            <td class="p-1.5 text-left">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
-                                            <td class="p-1.5 w-0">
+                                            <td class="bg-base-100 p-1.5 w-0 font-bold text-base-300 mx-1"> ::</td>
+                                            <td class="bg-base-100 p-1.5 text-left">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
+                                            <td class="bg-base-100 p-1.5 w-0">
                                                 <div class="align-middle badge badge-ghost hint--bottom-left hint--medium" aria-label="The type of this fragment changes based on which possible fix is chosen.">
                                                     <Branch></Branch>
                                                 </div>
                                             </td>
-                                        </tr>
-                                        <tr class="h-2 bg-base-200">
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
                                         </tr>
                                     {/each}
                                 {/if}
@@ -242,23 +232,19 @@
                             <table class="w-full text-sm bg-base-100 font-mono">
                                 <tbody id="globalTypes">
                                 {#if store.loading}
-                                    <tr class=" bg-base-100">
+                                    <tr class=" bg-base-100 border-y-4 border-base-200">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
                                         </td>
                                     </tr>
-                                    <tr class="h-2 bg-base-200">
-                                        <td></td>
-                                    </tr>
-                                    <tr class=" bg-base-100">
+
+                                    <tr class=" bg-base-100 border-y-4 border-base-200">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
                                         </td>
                                     </tr>
-                                    <tr class="h-2 bg-base-200">
-                                        <td></td>
-                                    </tr>
-                                    <tr class=" bg-base-100">
+
+                                    <tr class=" bg-base-100 border-y-4 border-base-200">
                                         <td class="p-1.5 w-0">
                                             <div class="skeleton h-4 w-ful"></div>
                                         </td>
@@ -267,7 +253,7 @@
 
                                     {#each store.globalTypes as [name, type]}
 
-                                        <tr class="bg-base-100" id={name}>
+                                        <tr class="bg-base-100 border-y-4 border-base-200" id={name}>
                                             <td class="p-1.5 w-0">
                                                 <div>{decode(name)[1]}</div>
                                             </td>
@@ -280,12 +266,6 @@
                                                     </div>
                                                 {/if}
                                             </td>
-                                        </tr>
-                                        <tr class="h-2 bg-base-200">
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
                                         </tr>
                                     {/each}
                                 {/if}
