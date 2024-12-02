@@ -18,6 +18,8 @@
     import examples from "./lib/examples";
     import Branch from "./icons/Branch.svelte";
     import Play from "./icons/Play.svelte";
+    import { themeChange } from 'theme-change'
+    import Output from "../Output.svelte";
 
     let store = getStore()
     let interval = $state(null)
@@ -27,6 +29,7 @@
 
 
     onMount(() => {
+        themeChange(false)
         store.typeCheck()
         slider = new Splide( '.splide', {
             gap: '1rem',
@@ -205,7 +208,7 @@
                                              class:mark-active-node = {store.getCurrentFix().MCS.includes(+name)}
                                      >{store.getCurrentError().CriticalNodes[name].DisplayName}</pre>
                                             </td>
-                                            <td class="bg-base-100 p-1.5 w-0 font-bold text-base-300 mx-1"> ::</td>
+                                            <td class="bg-base-100 p-1.5 w-0 font-bold opacity-30 mx-1"> ::</td>
                                             <td class="bg-base-100 p-1.5 text-left">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
                                             <td class="bg-base-100 p-1.5 w-0">
                                                 <div class="align-middle badge badge-ghost hint--bottom-left hint--medium" aria-label="The type of this fragment changes based on which possible fix is chosen.">
@@ -257,7 +260,7 @@
                                             <td class="p-1.5 w-0">
                                                 <div>{decode(name)[1]}</div>
                                             </td>
-                                            <td class="p-1.5 w-0 font-bold text-base-300 mx-1"> ::</td>
+                                            <td class="p-1.5 w-0 font-bold opacity-30 mx-1"> ::</td>
                                             <td class="p-1.5">{type.replaceAll("[Char]", "String").replaceAll('list', '[]')}</td>
                                             <td class="p-1.5 w-0">
                                                 {#if keysWithChangedValues().includes(name)}
@@ -279,38 +282,49 @@
         </aside>
         <Gutter bind:dom={gutterVertical} direction="vertical"></Gutter>
         <article class="flex flex-col">
-            <span class="px-2 py-1 flex items-center gap-2 border-b border-base-300 bg-base-200">
-                <Haskell class="text-primary"></Haskell>
-                <span class="mr-1">Main.hs</span>
-                {#if store.loading || store.running}
-                    <span class="loading loading-spinner loading-xs"></span>
-                {/if}
-                {#if store.typeErrors.length !== 0 && ! store.loading}
-                {#each store.typeErrors as _, errorIndex}
-                    <button class="btn btn-xs btn-error text-error-content"
-                            class:btn-outline={errorIndex !== store.selectedError}
-                            onclick={() => {
-                        store.chooseError(errorIndex);
-                    }}>
-                        Type Error {errorIndex + 1}
-                    </button>
-                {/each}
-                {/if}
-                {#if store.parsingErrors.length !== 0}
-                    <span class="badge  badge-error text-sm text-error-content">
-                        Parsing Error
-                    </span>
-                {/if}
-                {#if store.importErrors.length !== 0}
-                    <span class="badge  badge-error text-sm text-error-content">
-                        Import Error
-                    </span>
-                {/if}
-                {#if store.typeErrors.length === 0 && store.parsingErrors.length === 0 && store.importErrors.length === 0 && !store.running && !store.loading}
-                    <span class="badge badge-sm badge-success text-lg">
-                        <CheckMark></CheckMark>
-                    </span>
-                {/if}
+            <span class="px-2 py-1 flex items-center justify-between border-b border-base-300 bg-base-200">
+                <div class="flex gap-2 items-center">
+
+                    <Haskell class="text-primary"></Haskell>
+                    <span class="mr-1">Main.hs</span>
+                    {#if store.loading || store.running}
+                        <span class="loading loading-spinner loading-xs"></span>
+                    {/if}
+                    {#if store.typeErrors.length !== 0 && ! store.loading}
+                    {#each store.typeErrors as _, errorIndex}
+                        <button class="btn btn-xs btn-error text-error-content"
+                                class:btn-outline={errorIndex !== store.selectedError}
+                                onclick={() => {
+                            store.chooseError(errorIndex);
+                        }}>
+                            Type Error {errorIndex + 1}
+                        </button>
+                    {/each}
+                    {/if}
+                    {#if store.parsingErrors.length !== 0}
+                        <span class="badge  badge-error text-sm text-error-content">
+                            Parsing Error
+                        </span>
+                    {/if}
+                    {#if store.importErrors.length !== 0}
+                        <span class="badge  badge-error text-sm text-error-content">
+                            Import Error
+                        </span>
+                    {/if}
+                    {#if store.typeErrors.length === 0 && store.parsingErrors.length === 0 && store.importErrors.length === 0 && !store.running && !store.loading}
+                        <span class="badge badge-sm badge-success text-lg">
+                            <CheckMark></CheckMark>
+                        </span>
+                    {/if}
+                </div>
+                <div class="flex gap-2 items-center">
+                    <span class="text-xs">Theme:</span>
+                    <select data-choose-theme class="select select-xs">
+                      <option value="lofi">Light</option>
+                      <option value="dracula">Dark</option>
+                    </select>
+                </div>
+
             </span>
             <div class="relative flex-1">
                 <Editor></Editor>
@@ -327,8 +341,8 @@
                 <div class="splide__track">
                     <ul class="splide__list ">
                             {#each store.getAvailableFixes() as fix, fixId}
-                                <li class="splide__slide ">
-                                    <div class="min-w-72 flex flex-col bg-base-100 border border-neutral rounded-sm cursor-pointer"
+                                <li class="splide__slide">
+                                    <div class="min-w-72 flex flex-col bg-base-100 border border-primary rounded-sm cursor-pointer"
                                             class:border-opacity-25={fixId !== store.selectedFix}
                                             style="width: fit-content"
                                     >

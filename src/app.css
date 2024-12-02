@@ -13,14 +13,14 @@ html, body, #app{
   /*color: white;*/
 }
 
-.mark-0 { background-color: #b3e2cd; }
-.mark-1 { background-color: #fdcdac;}
-.mark-2 { background-color: #cbd5e8; }
-.mark-3 { background-color: #f4cae4;}
-.mark-4 { background-color: #e6f5c9;}
-.mark-5 { background-color: #fff2ae; }
-.mark-6 { background-color: #f1e2cc; }
-.mark-7 { background-color: #cccccc; }
+.mark-0 { background-color: var(--m1); }
+.mark-1 { background-color: var(--m2);}
+.mark-2 { background-color: var(--m3); }
+.mark-3 { background-color: var(--m4);}
+.mark-4 { background-color: var(--m5);}
+.mark-5 { background-color: var(--m6); }
+.mark-6 { background-color: var(--m7); }
+.mark-7 { background-color: var(--m8); }
 
 
 .mark-active-node {
@@ -35,10 +35,7 @@ html, body, #app{
 }
 
 .cm-content:has(.mark-spotlight) {
-  color: #a6a5a5;
-  /*transition-property: color;*/
-  /*transition-duration: 200ms;*/
-
+  color: var(--mc);
 }
 
 .cm-content:has(.mark-spotlight) :not(.mark-spotlight .mark) {
@@ -46,3 +43,40 @@ html, body, #app{
   /*border: none;*/
 }
 
+
+:root {
+  --m1: #fff;
+  --m2: #fff;
+  --m3: #fff;
+  --m4: #fff;
+  --m5: #fff;
+  --m6: #fff;
+  --m7: #fff;
+  --m8: #fff;
+
+  --mc: #fff;
+}
+
+[data-theme='dracula'] {
+  --m1: #1b9e77;
+  --m2: #d95f02;
+  --m3: #7570b3;
+  --m4: #e7298a;
+  --m5: #66a61e;
+  --m6: #e6ab02;
+  --m7: #a6761d;
+  --m8: #666666;
+  --mc: #4e4e4e;
+}
+
+[data-theme='lofi'] {
+  --m1: #b3e2cd;
+  --m2: #fdcdac;
+  --m3: #cbd5e8;
+  --m4: #f4cae4;
+  --m5: #e6f5c9;
+  --m6: #fff2ae;
+  --m7: #f1e2cc;
+  --m8: #cccccc;
+  --mc: #cdcdcd;
+}

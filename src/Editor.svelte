@@ -2,7 +2,7 @@
     import {onMount, untrack} from "svelte";
     import {EditorSelection, EditorState, SelectionRange} from "@codemirror/state"
     import {EditorView, lineNumbers, keymap} from "@codemirror/view"
-    import {defaultKeymap} from "@codemirror/commands"
+    import {defaultKeymap, history, historyKeymap} from "@codemirror/commands"
     import {highlightField, dispatchHighlights, clearHighlights} from "./lib/highlight";
     import {spotlightField, clearSpotlights, dispatchSpotlights} from "./lib/spotlight";
 
@@ -75,7 +75,9 @@
             state: EditorState.create({
                 doc: $state.snapshot(store.text),
                 extensions: [
+                    history(),
                     keymap.of(defaultKeymap),
+                    keymap.of(historyKeymap),
                     lineNumbers(),
                     highlightField,
                     spotlightField,
