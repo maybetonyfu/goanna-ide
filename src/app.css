@@ -44,6 +44,11 @@ html, body, #app{
 }
 
 
+.cm-editor .cm-content {
+  caret-color: var(--bc);
+}
+
+
 :root {
   --m1: #fff;
   --m2: #fff;
